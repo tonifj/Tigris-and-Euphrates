@@ -58,7 +58,6 @@ Map::Map()
 
 		}
 	}
-	//PrintMap();
 }
 
 
@@ -84,6 +83,8 @@ vector <MapTile*> Map::GetAdjacentsToTile(int x, int y)
 
 void Map::PrintMap() const
 {
+	cout << "====== MAP ======" << endl << endl;
+
 	MapTile* temp_tile;
 
 	for (int j = 10; j >= 0; --j)
@@ -153,6 +154,8 @@ void Map::PrintMap() const
 
 		cout << endl;
 	}
+	cout << endl << "<===============>" << endl;
+
 }
 
 //This call creates a token with its MapTile parent and also sets the token for the tile

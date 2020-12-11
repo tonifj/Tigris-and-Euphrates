@@ -10,12 +10,15 @@
 
 
 #define MAX_DECK_SIZE 6
+#define MAX_PLAYERS 4
+#define MIN_PLAYERS 2
 
 using namespace std;
 
 GameManager::GameManager()
 {
 	map = new Map();
+	map->PrintMap();
 
 	available_types.push(PlayerType::BOW);
 	available_types.push(PlayerType::BULL);
@@ -43,12 +46,64 @@ void GameManager::WaitForPlayers()
 	vector<Token*> temp_player_tokens;
 	temp_player_tokens.reserve(MAX_DECK_SIZE);
 
-	while (waiting_more_players && cin >> token_name)
+	cout << "Waiting new players. To declare yourself as a player, write 6 cards you'd like to have among these 4 types: " << endl;
+	cout << "settlement - farm - temple - market" << endl;
+	cout << "Once you finish, write '----' and begin the game!" << endl;
+
+	//while we're waiting more players
+	while (waiting_more_players && player_count < MAX_PLAYERS && cin >> token_name)
 	{
-		if (token_counter % MAX_DECK_SIZE == 0 && token_counter != 0)
+		
+		//detect ---- to tell the game we don't want more players
+		if (token_name == "----" && token_counter == 0)
+		{
+			if (player_count < MIN_PLAYERS)
+				cout << "You need one more player :'D" << endl;
+
+			else
+			{
+				waiting_more_players = false;
+				cout << "No more players!" << endl;
+				cout << "The game starts!" << endl;
+			}
+		}
+
+		//Detect tiles that the player wants
+		else
+		{
+			if (token_name == "settlement")
+			{
+				temp_player_tokens.push_back(new Token(TokenType::SETTLEMENT));
+				++token_counter;
+			}
+
+			else if (token_name == "temple")
+			{
+				temp_player_tokens.push_back(new Token(TokenType::TEMPLE));
+				++token_counter;
+			}
+
+			else if (token_name == "farm")
+			{
+				temp_player_tokens.push_back(new Token(TokenType::FARM));
+				++token_counter;
+			}
+
+			else if (token_name == "market")
+			{
+				temp_player_tokens.push_back(new Token(TokenType::MARKET));
+				++token_counter;
+			}
+
+			else cout << "enter a valid token!" << endl;
+
+		}
+
+		//Once we have 6 tiles, create a player object with those tiles and a random faction
+		if (token_counter != 0 && token_counter % (MAX_DECK_SIZE) == 0)
 		{
 			CreatePlayer(temp_player_tokens);
-			//cout << "player created!" << endl;
+			cout << "Welcome player!" << endl;
 			++player_count;
 			token_counter = 0;
 			temp_player_tokens.clear();
@@ -56,58 +111,14 @@ void GameManager::WaitForPlayers()
 			actual_player_turn_actions = 0;
 		}
 
-		if (token_name == "----" && token_counter == 0)
-		{
-			if (player_count < 2)
-				cout << "you need one more player :'D" << endl;
-
-			else
-			{
-				waiting_more_players = false;
-				//cout << "no more players!" << endl;
-			}
-		}
-
-		else
-		{
-			if (token_name == "settlement")
-			{
-				temp_player_tokens.push_back(new Token(TokenType::SETTLEMENT));
-				++token_counter;
-				continue;
-			}
-
-			if (token_name == "temple")
-			{
-				temp_player_tokens.push_back(new Token(TokenType::TEMPLE));
-				++token_counter;
-				continue;
-			}
-
-			if (token_name == "farm")
-			{
-				temp_player_tokens.push_back(new Token(TokenType::FARM));
-				++token_counter;
-				continue;
-			}
-
-			if (token_name == "market")
-			{
-				temp_player_tokens.push_back(new Token(TokenType::MARKET));
-				++token_counter;
-				continue;
-			}
-
-			cout << "enter a valid token!" << endl;
-
-		}
-
 	}
+
+	cout << "The game starts!" << endl;
 }
 
 void GameManager::CreatePlayer(vector<Token*>& tokens)
 {
-	players.push_back(new Player(available_types.back(), tokens, player_count));
+	players.push_back(new Player(available_types.front(), tokens, player_count));
 	available_types.pop();
 }
 
@@ -147,6 +158,19 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 		{
 			//build me a monument pls
 		}
+
+		else if (command == "help")
+		{
+			cout << "Type the folowing commands: " << endl;
+			cout << "tile: to place a tile you have in your deck" << endl;
+			cout << "leader: to place a leader" << endl;
+			cout << "treasure: to pick a sure" << endl;
+			cout << "catastrophe: to place a catastrophe tile" << endl;
+			cout << "revolt: to begin a revolt in a kingdom" << endl;
+			cout << "war: to begin a war between two kingdoms" << endl;
+			cout << "monument: to build a monument" << endl;
+			return false;
+		}
 	}
 
 	if (command == "refresh")
@@ -156,6 +180,13 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 		actual_player_turn_actions = 0;
 		return true;
 	}
+
+	else if (command == "help")
+	{
+		cout << "As you don't have more turns, you can refresh your deck or pass turn by ";
+		cout << "typing ´refresh` or `----`" << endl;
+	}
+
 
 	else
 	{
@@ -453,6 +484,12 @@ bool GameManager::CommandRefresh(Player* player)
 	int player_num;
 	cin >> player_num;
 
+	if (sizeof(player_num) != sizeof(int))
+	{
+		cout << "Write the player numebr you want to refresh cards!" << endl;
+		return false;
+	}
+
 	vector<string> tokens_to_refresh;
 	tokens_to_refresh.reserve(MAX_DECK_SIZE);
 
@@ -470,6 +507,15 @@ bool GameManager::CommandRefresh(Player* player)
 			{
 				if (int(tokens_to_refresh.size()) < MAX_DECK_SIZE - deck_size && cin >> temp_string)
 				{
+					if (temp_string == "help")
+					{
+						cout << "Write the cards you want to refresh: " << endl;
+						cout << "1) settlement" << endl;
+						cout << "2) farm" << endl;
+						cout << "3) temple" << endl;
+						cout << "4) market" << endl;
+						return false;
+					}
 
 					if (CheckValidTileName(temp_string))
 						tokens_to_refresh.push_back(temp_string);

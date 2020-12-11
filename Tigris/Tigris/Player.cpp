@@ -33,6 +33,27 @@ Player::Player(PlayerType faction, vector<Token*>& tokens, int new_turn) : facti
 	leaders.push_back(new Token(TokenType::FARMER, faction));
 	leaders.push_back(new Token(TokenType::MERCHANT, faction));
 	leaders.push_back(new Token(TokenType::PRIEST, faction));
+
+	cout << "Your faction is: ";
+
+	switch (faction)
+	{
+	case PlayerType::BOW:
+			std::cout << " BOW" << endl;
+			break;
+
+	case PlayerType::BULL:
+		std::cout << " BULL" << endl;
+		break;
+
+	case PlayerType::LION:
+		std::cout << " LION" << endl;
+		break;
+
+	case PlayerType::POT:
+		std::cout << " POT" << endl;
+		break;
+	}
 }
 
 void Player::Refresh()
