@@ -1,22 +1,64 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Archivos de origen">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
-    </Filter>
     <Filter Include="Archivos de encabezado">
       <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
       <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
     </Filter>
-    <Filter Include="Archivos de recursos">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Main">
+      <UniqueIdentifier>{37280498-3aae-4d5f-8937-8c1254d87526}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Elements">
+      <UniqueIdentifier>{d45b778b-9a8b-44e7-bfe8-36b4337c1ce3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Game Elements\Map">
+      <UniqueIdentifier>{f8570bbc-f384-4eb0-9e67-38db7f48ba87}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Source.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="Token.cpp">
+      <Filter>Game Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTile.cpp">
+      <Filter>Game Elements\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Area.cpp">
+      <Filter>Game Elements\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Map.cpp">
+      <Filter>Game Elements\Map</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Game Elements</Filter>
+    </ClCompile>
+    <ClCompile Include="GameManager.cpp">
+      <Filter>Game Elements</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Map.h">
+      <Filter>Game Elements\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="Player.h">
+      <Filter>Game Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Token.h">
+      <Filter>Game Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Area.h">
+      <Filter>Game Elements\Map</Filter>
+    </ClInclude>
+    <ClInclude Include="GameManager.h">
+      <Filter>Game Elements</Filter>
+    </ClInclude>
+    <ClInclude Include="Globals.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTile.h">
+      <Filter>Game Elements\Map</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -115,7 +115,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Area.cpp" />
+    <ClCompile Include="GameManager.cpp" />
+    <ClCompile Include="Map.cpp" />
+    <ClCompile Include="MapTile.cpp" />
+    <ClCompile Include="Player.cpp" />
     <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Token.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Area.h" />
+    <ClInclude Include="GameManager.h" />
+    <ClInclude Include="Globals.h" />
+    <ClInclude Include="Map.h" />
+    <ClInclude Include="MapTile.h" />
+    <ClInclude Include="Player.h" />
+    <ClInclude Include="Token.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
