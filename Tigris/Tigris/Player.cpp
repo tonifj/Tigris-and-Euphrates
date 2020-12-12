@@ -143,6 +143,28 @@ bool Player::PlaceToken(Map* map, MyTokenType type, int x, int y)
 	}
 }
 
+void Player::UpdatePoints(TokenColor color)
+{
+	switch (color)
+	{
+	case TokenColor::RED:
+		points.amulets += 1;
+		break;
+
+	case TokenColor::BLACK:
+		points.bricks += 1;
+		break;
+
+	case TokenColor::BLUE:
+		points.crops += 1;
+		break;
+
+	case TokenColor::GREEN:
+		points.goods += 1;
+		break;
+	}
+}
+
 void Player::DiscardUsedToken(MyTokenType type)
 {
 	int position_to_remove_token = 0;

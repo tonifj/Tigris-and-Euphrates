@@ -39,6 +39,7 @@ public:
 	int GetNumTreasures() { return num_treasures; }
 	PlayerType GetFaction() { return faction; }
 	VictoryPoints GetVP() { return points; }
+	void UpdatePoints(TokenColor color);
 
 	//Actions
 	bool PlaceToken(Map* map, MyTokenType type, int x, int y);

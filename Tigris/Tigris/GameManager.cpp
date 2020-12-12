@@ -27,9 +27,9 @@ GameManager::GameManager()
 	available_types.push(PlayerType::LION);
 }
 
-void GameManager::UpdateArea(Area* area, MapTile* new_tile) 
-{ 
-	area->AddTile(new_tile); 
+void GameManager::UpdateArea(Area* area, MapTile* new_tile)
+{
+	area->AddTile(new_tile);
 }
 
 void GameManager::ClearInput()
@@ -58,7 +58,7 @@ void GameManager::WaitForPlayers()
 	//while we're waiting more players
 	while (waiting_more_players && player_count < MAX_PLAYERS && cin >> token_name)
 	{
-		
+
 		//detect ---- to tell the game we don't want more players
 		if (token_name == "----" && token_counter == 0)
 		{
@@ -132,7 +132,7 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 		if (command == "tile")
 			return CommandTile(player);
 
-		else if (command == "refresh")			
+		else if (command == "refresh")
 			return CommandRefresh(player);
 
 		else if (command == "deck")
@@ -140,7 +140,7 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 			cout << "You got: " << endl;
 			current_player->ShowPlayer();
 		}
-			
+
 		else if (command == "leader")
 		{
 			return CommandLeader(player);
@@ -263,6 +263,14 @@ bool GameManager::CheckValidTile(int x, int y)
 	return map->IsValidTile(x, y);
 }
 
+Player* GameManager::GetPlayerByDinasty(PlayerType type)
+{
+	for (int i = 0; players.size(); ++i)
+	{
+		if (players[i]->GetFaction() == type)
+			return players[i];
+	}
+}
 
 bool GameManager::CommandLeader(Player* player)
 {
@@ -378,7 +386,8 @@ bool GameManager::ProcessLeader(Token* leader, int x, int y)
 		{
 			if (adjacent_kingdoms == 0)
 			{
-				current_player->MoveLeader(map, old_region_token->GetTileParent()->GetAreaParent(),leader->GetType(), x, y);
+				current_player->MoveLeader(map, old_region_token->GetTileParent()->GetAreaParent(), leader->GetType(), x, y);
+				return true;
 			}
 
 			else
@@ -387,10 +396,11 @@ bool GameManager::ProcessLeader(Token* leader, int x, int y)
 
 				if (AreThereLeadersOfTheSameColor(leader, old_region_token->GetTileParent()->GetAreaParent()))
 				{
+					cout << "A revolt is available now!" << endl;
 					old_region_token->GetTileParent()->GetAreaParent()->SetRevoltAvailable();
 				}
+				return true;
 			}
-			
 		}
 
 		else
@@ -407,34 +417,18 @@ bool GameManager::ProcessLeader(Token* leader, int x, int y)
 	}
 }
 
-void GameManager::MoveLeader(Token* leader, MapTile* old_tile, MapTile* new_tile)
-{
-	int x = new_tile->position_x;
-	int y = new_tile->position_y;
-	map->GetTile(x, y)->SetToken(leader);
-	leader->SetParent(map->GetTile(x, y));
-	leader->GetTileParent()->SetToken(leader);
-	map->GetTile(x, y)->SetToken(leader);
-	map->UpdateMap(leader, new_tile->position_x, new_tile->position_y);
-}
-
-void GameManager::RemoveLeader(Token* leader)
-{
-	leader->GetTileParent()->RemoveToken();
-}
-
 bool GameManager::AreThereLeadersOfTheSameColor(Token* incoming_leader, Area* area)
 {
-	
+
 	for (int i = 0; i < int(area->GetTiles().size()); ++i)
 	{
 		if (area->GetTiles()[i]->GetToken() != nullptr && area->CheckValidLeader(area->GetTiles()[i]->GetToken()->GetType()))
 		{
-			if (incoming_leader->GetType() == area->GetTiles()[i]->GetToken()->GetType() && 
+			if (incoming_leader->GetType() == area->GetTiles()[i]->GetToken()->GetType() &&
 				incoming_leader->GetFaction() != area->GetTiles()[i]->GetToken()->GetFaction())
 				return true;
 		}
-		
+
 	}
 	return false;
 }
@@ -446,6 +440,10 @@ bool GameManager::IsTokenPartOfKingdom(Token* token)
 
 bool GameManager::ProcessTile(Player* player, MyTokenType type)
 {
+	int num_adjacent_tiles_belonging_to_kingdom = 0;
+	bool only_one_kingdom = true;
+
+	Area* prev_kingdom = nullptr;
 	int x, y;
 	if (CheckTokenAvailability(player, type))
 	{
@@ -455,8 +453,59 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 		{
 			if (CheckTileAvailability(x, y))
 			{
-				
-				return player->PlaceToken(map, type, x, y);
+				vector <MapTile*> adjacents = map->GetAdjacentsToTile(x, y);
+				prev_kingdom = adjacents[0]->GetAreaParent();
+
+				//check every adjacent tile where we want to put our tile
+				for (int i = 0; i < adjacents.size() && only_one_kingdom; ++i)
+				{
+					if (adjacents[i]->BelongsToKingdom())
+					{
+						++num_adjacent_tiles_belonging_to_kingdom;
+						//if the adj tile belongs to a kingdom and is not the same as the tile before
+						if (!adjacents[i]->GetAreaParent()->IsSameAs(prev_kingdom))
+							only_one_kingdom = false;
+
+						else
+							prev_kingdom = adjacents[i]->GetAreaParent();
+
+						if (!only_one_kingdom)
+						{
+							cout << "Tile placed between two kingdoms" << endl;
+							prev_kingdom->SetWarAvailable();
+							adjacents[i]->GetAreaParent()->SetWarAvailable();
+
+							adjacents[i]->GetAreaParent()->AddTile(map->GetTile(x, y));
+
+							return player->PlaceToken(map, type, x, y);
+
+						}
+					}
+				}
+
+				if (num_adjacent_tiles_belonging_to_kingdom == 0)
+				{
+					map->GetTile(x, y)->SetToken(new Token(type));
+					map->AddArea(new Area(map->GetTile(x, y)));
+					return player->PlaceToken(map, type, x, y);
+				}
+
+				else
+				{
+					if (only_one_kingdom)
+					{
+						map->GetTile(x, y)->SetToken(new Token(type));
+						prev_kingdom->AddTile(map->GetTile(x, y));
+
+						//add points
+						AddPointsToPlayer(prev_kingdom, map->GetTile(x, y)->GetToken());
+
+						return player->PlaceToken(map, type, x, y);
+					}
+				}
+
+
+
 			}
 
 			cout << "exception: board space is already occupied" << endl;
@@ -470,6 +519,41 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 	cout << "exception: could not find tile of specified type" << endl;
 	return false;
 }
+
+
+
+void GameManager::AddPointsToPlayer(Area* area, Token* token)
+{
+	vector <Token*> area_leaders = area->GetLeaders();
+	
+	for (int i = 0; i < area_leaders.size(); ++i)
+	{
+		if (area_leaders[i]->GetColor() == token->GetColor())
+		{
+			switch (token->GetType())
+			{
+			case MyTokenType::FARM :
+				GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::BLUE);
+				break;
+
+			case MyTokenType::MARKET:
+				GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::GREEN);
+				break;
+
+			case MyTokenType::SETTLEMENT:
+				GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::BLACK);
+				break;
+
+			case MyTokenType::TEMPLE:
+				GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::RED);
+				break;
+			}
+		}
+
+	}
+
+}
+
 
 bool GameManager::CommandRefresh(Player* player)
 {
@@ -591,7 +675,7 @@ void GameManager::GameLoop()
 			{
 				cout << "- - - - - - - - - - - - - - - -" << endl;
 
-				
+
 				cin >> command;
 
 				if (ReadCommand(players[i], command, actual_player_turn_actions))

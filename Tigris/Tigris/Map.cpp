@@ -44,14 +44,14 @@ Map::Map()
 			tiles[i % 16][j] = new MapTile(TileType::GROUND, i % 16, j);
 			tiles[i % 16][j]->SetToken(new Token(MyTokenType::TEMPLE));
 			tiles[i % 16][j]->GetToken()->SetParent(tiles[i % 16][j]);
+			tiles[i % 16][j]->GetToken()->SetTreasure();
 			tiles[i % 16][j]->SetAreaParent(new_area);
+
 			MapTile* temp_tile = new MapTile(tiles[i % 16][j]);
 			new_area->AddTile(temp_tile);
-
-
 			new_area->GetTile(i % 16, j)->SetAreaParent(new_area);
+
 			AddArea(new_area);
-			++area_counter_id;
 		}
 	}
 }
@@ -179,9 +179,7 @@ void Map::UpdateMap(Token* token, int x, int y)
 				tile_with_area_parent = true;
 				adjacents[i]->GetAreaParent()->AddTile(tiles[x][y]);
 			}
-
 		}
-
 	}
 }
 

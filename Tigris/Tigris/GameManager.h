@@ -29,6 +29,7 @@ private:
 	bool ReadCommand(Player* player, std::string& command, int turn_actions);
 	bool CheckTokenAvailability(Player* player, MyTokenType type);
 	int ActualPlayerActions() { return actual_player_turn_actions; }
+	void AddPointsToPlayer(Area* area, Token* token);
 
 	//Commands
 	bool CommandTile(Player* player);
@@ -49,8 +50,6 @@ private:
 	bool IsTokenPartOfKingdom(Token* token);
 	std::vector <Token*> GetAreaLeaders(int area_id);
 	MyTokenType TranslateStringToToken(std::string name);
-	void MoveLeader(Token* leader, MapTile* old_tile, MapTile* new_tile);
-	void RemoveLeader(Token* leader);
 
 	//lmao
 	bool AreThereLeadersOfTheSameColor(Token* incoming_leader, Area* area);
@@ -61,6 +60,7 @@ private:
 	//Tools
 	Player* current_player;
 	void SetCurrentPlayer(Player* player) { current_player = player; }
+	Player* GetPlayerByDinasty(PlayerType type);
 	void ClearInput();
 	int actual_player_turn_actions = 0;
 	int player_count = 0;

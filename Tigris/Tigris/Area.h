@@ -11,8 +11,8 @@ class Area
 public:
 	Area() { id = -1; }
 	Area(int id) : id(id) {}
-	Area(MapTile* initial_tile) { id = -1; tiles.push_back(initial_tile); }
-	Area(MapTile* initial_tile, int new_id) { tiles.push_back(initial_tile); id = new_id; }
+	Area(MapTile* initial_tile);
+	Area(MapTile* initial_tile, int new_id);
 
 	void AddTile(MapTile* tile);
 
@@ -20,9 +20,10 @@ public:
 	int GetId() { return id; }
 	int GetNumOfLeaders();
 
-	bool IsSameAs(Area* area) { return id == area->id; }
+	bool IsSameAs(Area* area) { if (area != nullptr) return id == area->id; else return new Area(-1); }
 	bool IsKingdom();
 
+	std::vector <Token*> GetLeaders();
 	std::vector<MapTile*> GetTiles() { return tiles; }
 	void RemoveTile(int x, int y);
 	void SetWarAvailable() { war_availabe = true; }

@@ -3,6 +3,9 @@
 #include "Map.h"
 #include "Token.h"
 
+Area::Area(MapTile* initial_tile) { id = -1; initial_tile->SetAreaParent(this); tiles.push_back(initial_tile); }
+Area::Area(MapTile* initial_tile, int new_id) { initial_tile->SetAreaParent(this); tiles.push_back(initial_tile); id = new_id; }
+
 MapTile* Area::GetTile(int x, int y)
 {
 	for (int i = 0; i < tiles.size(); ++i)
@@ -66,4 +69,18 @@ void Area::AddTile(MapTile* tile)
 { 
 	tile->SetAreaParent(this); 
 	tiles.push_back(tile); 
+}
+
+std::vector<Token*> Area::GetLeaders()
+{
+	std::vector<Token*> leaders_vec;
+	leaders_vec.reserve(4);
+
+	for (int i = 0; i < tiles.size(); ++i)
+	{
+		if (CheckValidLeader(tiles[i]->GetToken()->GetType()))
+			leaders_vec.push_back(tiles[i]->GetToken());
+	}
+
+	return leaders_vec;
 }

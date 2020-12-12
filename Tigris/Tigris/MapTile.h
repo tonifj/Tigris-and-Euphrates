@@ -7,7 +7,6 @@ enum TileType
 	RIVER
 };
 
-enum MyTokenType;
 class Token;
 class Area;
 class MapTile
@@ -25,7 +24,7 @@ public:
 	void SetAreaParent(Area* area) { area_parent = area; }
 	Area* GetAreaParent() { return area_parent; }
 
-	const bool BelongsToKingdom() { return belongs_to_kingdom; }
+	const bool BelongsToKingdom();
 	void JoinToKingdom() { belongs_to_kingdom = true; }
 	void LeaveKingdom() { belongs_to_kingdom = false; }
 
