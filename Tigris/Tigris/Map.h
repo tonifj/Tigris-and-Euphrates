@@ -3,6 +3,7 @@
 
 #include <vector>
 #include <unordered_map>
+#include <windows.h>
 
 class Token;
 class MapTile;
@@ -28,6 +29,8 @@ public:
 
 private:
 	std::unordered_map<int, Area*> areas;
+	int area_counter_id = 0;
+	HANDLE handle;
 };
 
 #endif; //_MAP_H_

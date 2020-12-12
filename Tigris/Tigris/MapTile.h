@@ -7,7 +7,7 @@ enum TileType
 	RIVER
 };
 
-enum TokenType;
+enum MyTokenType;
 class Token;
 class Area;
 class MapTile
@@ -19,7 +19,7 @@ public:
 	MapTile(TileType type, int x, int y) : tile_type(type), position_x(x), position_y(y) {}
 	const bool IsEmpty() const { return token == nullptr; };
 	const bool IsRiver() const { return tile_type == TileType::RIVER; };
-	void SetToken(Token* new_token) { token = new_token; };
+	void SetToken(Token* new_token);
 	Token* GetToken() const { return token; }
 	void RemoveToken() { token = nullptr; }
 	void SetAreaParent(Area* area) { area_parent = area; }

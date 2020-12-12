@@ -1,5 +1,6 @@
 #include <iostream>
 #include <climits>
+#include <windows.h>
 
 #include "GameManager.h"
 #include "Map.h"
@@ -38,6 +39,10 @@ void GameManager::ClearInput()
 
 void GameManager::WaitForPlayers()
 {
+
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	SetConsoleTextAttribute(hConsole, 15);
+
 	bool waiting_more_players = true;
 	int token_counter = 0;
 
@@ -64,7 +69,6 @@ void GameManager::WaitForPlayers()
 			{
 				waiting_more_players = false;
 				cout << "No more players!" << endl;
-				cout << "The game starts!" << endl;
 			}
 		}
 
@@ -73,25 +77,25 @@ void GameManager::WaitForPlayers()
 		{
 			if (token_name == "settlement")
 			{
-				temp_player_tokens.push_back(new Token(TokenType::SETTLEMENT));
+				temp_player_tokens.push_back(new Token(MyTokenType::SETTLEMENT));
 				++token_counter;
 			}
 
 			else if (token_name == "temple")
 			{
-				temp_player_tokens.push_back(new Token(TokenType::TEMPLE));
+				temp_player_tokens.push_back(new Token(MyTokenType::TEMPLE));
 				++token_counter;
 			}
 
 			else if (token_name == "farm")
 			{
-				temp_player_tokens.push_back(new Token(TokenType::FARM));
+				temp_player_tokens.push_back(new Token(MyTokenType::FARM));
 				++token_counter;
 			}
 
 			else if (token_name == "market")
 			{
-				temp_player_tokens.push_back(new Token(TokenType::MARKET));
+				temp_player_tokens.push_back(new Token(MyTokenType::MARKET));
 				++token_counter;
 			}
 
@@ -110,9 +114,8 @@ void GameManager::WaitForPlayers()
 			temp_player_tokens.shrink_to_fit();
 			actual_player_turn_actions = 0;
 		}
-
 	}
-
+	ClearInput();
 	cout << "The game starts!" << endl;
 }
 
@@ -129,6 +132,15 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 		if (command == "tile")
 			return CommandTile(player);
 
+		else if (command == "refresh")			
+			return CommandRefresh(player);
+
+		else if (command == "deck")
+		{
+			cout << "You got: " << endl;
+			current_player->ShowPlayer();
+		}
+			
 		else if (command == "leader")
 		{
 			return CommandLeader(player);
@@ -163,30 +175,28 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 		{
 			cout << "Type the folowing commands: " << endl;
 			cout << "tile: to place a tile you have in your deck" << endl;
+			cout << "refresh: draw tiles from the bag into your hand!" << endl;
 			cout << "leader: to place a leader" << endl;
 			cout << "treasure: to pick a sure" << endl;
 			cout << "catastrophe: to place a catastrophe tile" << endl;
 			cout << "revolt: to begin a revolt in a kingdom" << endl;
 			cout << "war: to begin a war between two kingdoms" << endl;
 			cout << "monument: to build a monument" << endl;
+			cout << "deck: to check your deck" << endl;
+
+			cout << "- - - - - - - - - - - - - - - -" << endl;
+			cout << "Map info:" << endl;
+			cout << "- - - - - - - - - - - - - - - -" << endl;
+			cout << "*: river" << endl;
+			cout << "-: land" << endl;
+			cout << "F: farmer / f: farm" << endl;
+			cout << "M: merchant / f: market" << endl;
+			cout << "T: temple / p: priest" << endl;
+			cout << "K: king / s: settlement" << endl;
+
 			return false;
 		}
 	}
-
-	if (command == "refresh")
-	{
-		CommandRefresh(player);
-		player->EndTurn();
-		actual_player_turn_actions = 0;
-		return true;
-	}
-
-	else if (command == "help")
-	{
-		cout << "As you don't have more turns, you can refresh your deck or pass turn by ";
-		cout << "typing ´refresh` or `----`" << endl;
-	}
-
 
 	else
 	{
@@ -194,7 +204,11 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 		{
 			player->EndTurn();
 			actual_player_turn_actions = 0;
+			return true;
 		}
+
+		else if (command == "help")
+			cout << "Now, you have to pass your turn by typing '----'";
 
 		else
 			cout << "exception: too many turn actions" << endl;
@@ -203,7 +217,7 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 	return false;
 }
 
-bool GameManager::CheckTokenAvailability(Player* player, TokenType type)
+bool GameManager::CheckTokenAvailability(Player* player, MyTokenType type)
 {
 	//Check if the player has the token
 	for (int i = 0; i < int(player->GetDeck().size()); ++i)
@@ -221,16 +235,16 @@ bool GameManager::CommandTile(Player* player)
 	cin >> type;
 
 	if (type == "settlement")
-		return ProcessTile(player, TokenType::SETTLEMENT);
+		return ProcessTile(player, MyTokenType::SETTLEMENT);
 
 	else if (type == "farm")
-		return ProcessTile(player, TokenType::FARM);
+		return ProcessTile(player, MyTokenType::FARM);
 
 	else if (type == "market")
-		return ProcessTile(player, TokenType::MARKET);
+		return ProcessTile(player, MyTokenType::MARKET);
 
 	else if (type == "temple")
-		return ProcessTile(player, TokenType::TEMPLE);
+		return ProcessTile(player, MyTokenType::TEMPLE);
 
 	cout << "exception: could not parse tile type" << endl;
 	return false;
@@ -249,10 +263,6 @@ bool GameManager::CheckValidTile(int x, int y)
 	return map->IsValidTile(x, y);
 }
 
-vector <Token*> GameManager::GetAreaLeaders(int area_id)
-{
-	return map->GetAreas()[area_id]->GetLeaders();
-}
 
 bool GameManager::CommandLeader(Player* player)
 {
@@ -297,24 +307,24 @@ bool GameManager::CommandLeader(Player* player)
 	return false;
 }
 
-TokenType GameManager::TranslateStringToToken(string name)
+MyTokenType GameManager::TranslateStringToToken(string name)
 {
 	if (name == "king")
-		return TokenType::KING;
+		return MyTokenType::KING;
 	else if (name == "merchant")
-		return TokenType::MERCHANT;
+		return MyTokenType::MERCHANT;
 	else if (name == "farmer")
-		return TokenType::FARMER;
+		return MyTokenType::FARMER;
 	else if (name == "priest")
-		return TokenType::PRIEST;
+		return MyTokenType::PRIEST;
 	else if (name == "settlement")
-		return TokenType::SETTLEMENT;
+		return MyTokenType::SETTLEMENT;
 	else if (name == "farm")
-		return TokenType::FARM;
+		return MyTokenType::FARM;
 	else if (name == "temple")
-		return TokenType::TEMPLE;
+		return MyTokenType::TEMPLE;
 	else if (name == "market")
-		return TokenType::MARKET;
+		return MyTokenType::MARKET;
 }
 
 bool GameManager::ProcessLeader(Token* leader, int x, int y)
@@ -334,7 +344,7 @@ bool GameManager::ProcessLeader(Token* leader, int x, int y)
 	{
 		//Check if the leader will be placed near a temple
 		if (adjacent_tokens[i]->GetToken() != nullptr &&
-			adjacent_tokens[i]->GetToken()->GetType() == TokenType::TEMPLE)
+			adjacent_tokens[i]->GetToken()->GetType() == MyTokenType::TEMPLE)
 		{
 			at_least_one_temple = true;
 
@@ -368,43 +378,19 @@ bool GameManager::ProcessLeader(Token* leader, int x, int y)
 		{
 			if (adjacent_kingdoms == 0)
 			{
-				//if the leader is placed somewhere, remove it
-				if (leader->GetTileParent() != nullptr)
-					RemoveLeader(leader);
-
-				map->GetTile(x, y)->SetAreaParent(old_region_token->GetTileParent()->GetAreaParent()); // add parent to the tile
-				MoveLeader(leader, nullptr, map->GetTile(x, y));
-				old_region_token->GetTileParent()->GetAreaParent()->AddLeader(leader);
-
+				current_player->MoveLeader(map, old_region_token->GetTileParent()->GetAreaParent(),leader->GetType(), x, y);
 			}
 
 			else
 			{
-				if (leader->GetTileParent() != nullptr)
-					RemoveLeader(leader);
+				current_player->MoveLeader(map, old_region_token->GetTileParent()->GetAreaParent(), leader->GetType(), x, y);
 
-				//add to the kingdom the new leader
-				map->GetTile(x, y)->SetAreaParent(old_kingdom_token->GetTileParent()->GetAreaParent()); // add parent to the tile where we're placing the leader
-				MoveLeader(leader, leader->GetTileParent(), map->GetTile(x, y));
-				old_kingdom_token->GetTileParent()->GetAreaParent()->AddLeader(leader); // add leader to the area
-
-				if (AreThereLeadersOfTheSameColor(leader, old_kingdom_token));
-				activate_revolt = true;
-
-				//This means  that a leader of the same was sitting here before the new one
-				if (activate_revolt)
+				if (AreThereLeadersOfTheSameColor(leader, old_region_token->GetTileParent()->GetAreaParent()))
 				{
-					if (leader->GetFaction() != old_region_token->GetFaction())
-					{
-						old_kingdom_token->GetTileParent()->GetAreaParent()->SetRevoltAvailable();
-						cout << "This will be a blast!" << endl;
-					}
-
+					old_region_token->GetTileParent()->GetAreaParent()->SetRevoltAvailable();
 				}
 			}
-
-			//place leader
-			return current_player->PlaceToken(map, leader->GetType(), x, y);
+			
 		}
 
 		else
@@ -437,13 +423,18 @@ void GameManager::RemoveLeader(Token* leader)
 	leader->GetTileParent()->RemoveToken();
 }
 
-bool GameManager::AreThereLeadersOfTheSameColor(Token* incoming_leader, Token* old_leader)
+bool GameManager::AreThereLeadersOfTheSameColor(Token* incoming_leader, Area* area)
 {
-	Area* temp_area = old_leader->GetTileParent()->GetAreaParent();
-	for (int i = 0; i < int(temp_area->GetLeaders().size()); ++i)
+	
+	for (int i = 0; i < int(area->GetTiles().size()); ++i)
 	{
-		if (incoming_leader->GetType() == temp_area->GetLeaders()[i]->GetType() && incoming_leader->GetFaction() != temp_area->GetLeaders()[i]->GetFaction())
-			return true;
+		if (area->GetTiles()[i]->GetToken() != nullptr && area->CheckValidLeader(area->GetTiles()[i]->GetToken()->GetType()))
+		{
+			if (incoming_leader->GetType() == area->GetTiles()[i]->GetToken()->GetType() && 
+				incoming_leader->GetFaction() != area->GetTiles()[i]->GetToken()->GetFaction())
+				return true;
+		}
+		
 	}
 	return false;
 }
@@ -453,7 +444,7 @@ bool GameManager::IsTokenPartOfKingdom(Token* token)
 	return 	token->GetTileParent()->GetAreaParent()->IsKingdom();
 }
 
-bool GameManager::ProcessTile(Player* player, TokenType type)
+bool GameManager::ProcessTile(Player* player, MyTokenType type)
 {
 	int x, y;
 	if (CheckTokenAvailability(player, type))
@@ -464,6 +455,7 @@ bool GameManager::ProcessTile(Player* player, TokenType type)
 		{
 			if (CheckTileAvailability(x, y))
 			{
+				
 				return player->PlaceToken(map, type, x, y);
 			}
 
@@ -486,7 +478,7 @@ bool GameManager::CommandRefresh(Player* player)
 
 	if (sizeof(player_num) != sizeof(int))
 	{
-		cout << "Write the player numebr you want to refresh cards!" << endl;
+		cout << "Write the player number you want to refresh cards!" << endl;
 		return false;
 	}
 
@@ -514,6 +506,7 @@ bool GameManager::CommandRefresh(Player* player)
 						cout << "2) farm" << endl;
 						cout << "3) temple" << endl;
 						cout << "4) market" << endl;
+						cout << "As you can only have 6 cards in your deck, you can refresh as many as you want until reaching 6 cards!" << endl;
 						return false;
 					}
 
@@ -534,12 +527,14 @@ bool GameManager::CommandRefresh(Player* player)
 
 				else if (int(tokens_to_refresh.size()) + deck_size == MAX_DECK_SIZE)
 				{
+					Token* new_token;
 					for (int i = 0; i < int(tokens_to_refresh.size()); ++i)
-						player->AcquireNewToken(new Token(tokens_to_refresh[i]));
+					{
+						new_token = new Token(tokens_to_refresh[i]);
+						player->AcquireNewToken(new_token);
 
-					//cout << "Tokens refreshed!" << endl;
-					//player->ShowPlayer();
-
+					}
+					player->ShowPlayer();
 					return true;
 				}
 
@@ -581,15 +576,22 @@ void GameManager::GameLoop()
 	bool end_game = false;
 	string command;
 
+	HANDLE hConsole = GetStdHandle(STD_OUTPUT_HANDLE);
+	//SetConsoleTextAttribute(hConsole, 15);
+
 	while (!end_game)
 	{
 		for (int i = 0; i < int(players.size()); ++i)
 		{
 			players[i]->NowPlaying();
 			SetCurrentPlayer(players[i]);
-			//cout << "Player " << i << endl;
+			SetConsoleTextAttribute(hConsole, i + 2);
+			cout << "Player " << i << "'s turn" << endl;
 			while (players[i]->IsPlaying())
 			{
+				cout << "- - - - - - - - - - - - - - - -" << endl;
+
+				
 				cin >> command;
 
 				if (ReadCommand(players[i], command, actual_player_turn_actions))
@@ -601,6 +603,6 @@ void GameManager::GameLoop()
 			actual_player_turn_actions = 0;
 
 		}
-		end_game = true;
+		//end_game = true;
 	}
 }

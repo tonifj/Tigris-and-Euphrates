@@ -38,11 +38,11 @@ Map::Map()
 
 		else if (map[i] == 'T')
 		{
-			Area* new_area = new Area(areas.size());
+			Area* new_area = new Area(area_counter_id);
 
 			//Set tile properties
 			tiles[i % 16][j] = new MapTile(TileType::GROUND, i % 16, j);
-			tiles[i % 16][j]->SetToken(new Token(TokenType::TEMPLE));
+			tiles[i % 16][j]->SetToken(new Token(MyTokenType::TEMPLE));
 			tiles[i % 16][j]->GetToken()->SetParent(tiles[i % 16][j]);
 			tiles[i % 16][j]->SetAreaParent(new_area);
 			MapTile* temp_tile = new MapTile(tiles[i % 16][j]);
@@ -50,12 +50,8 @@ Map::Map()
 
 
 			new_area->GetTile(i % 16, j)->SetAreaParent(new_area);
-
-			//Add tile to area
-
-			//store area
 			AddArea(new_area);
-
+			++area_counter_id;
 		}
 	}
 }
@@ -63,7 +59,11 @@ Map::Map()
 
 
 
-void Map::AddArea(Area* area) { areas[area->GetId()] = area; }
+void Map::AddArea(Area* area)
+{
+	areas[area_counter_id] = area;
+	++area_counter_id;
+}
 
 vector <MapTile*> Map::GetAdjacentsToTile(int x, int y)
 {
@@ -96,7 +96,7 @@ void Map::PrintMap() const
 				if (tiles[i][j]->IsEmpty())
 					cout << '*';
 				else
-					cout << 'F';
+					cout << 'f';
 			}
 			else
 			{
@@ -104,43 +104,43 @@ void Map::PrintMap() const
 
 				if (temp_tile->GetToken() != nullptr)
 				{
-					if (temp_tile->GetToken()->GetType() == TokenType::TEMPLE)
+					if (temp_tile->GetToken()->GetType() == MyTokenType::TEMPLE)
 					{
 						cout << 't';
 						continue;
 					}
 
-					else if (temp_tile->GetToken()->GetType() == TokenType::SETTLEMENT)
+					else if (temp_tile->GetToken()->GetType() == MyTokenType::SETTLEMENT)
 					{
 						cout << 's';
 						continue;
 					}
 
-					else if (temp_tile->GetToken()->GetType() == TokenType::MARKET)
+					else if (temp_tile->GetToken()->GetType() == MyTokenType::MARKET)
 					{
 						cout << 'm';
 						continue;
 					}
 
-					else if (temp_tile->GetToken()->GetType() == TokenType::KING)
+					else if (temp_tile->GetToken()->GetType() == MyTokenType::KING)
 					{
 						cout << 'K';
 						continue;
 					}
 
-					else if (temp_tile->GetToken()->GetType() == TokenType::FARMER)
+					else if (temp_tile->GetToken()->GetType() == MyTokenType::FARMER)
 					{
 						cout << 'F';
 						continue;
 					}
 
-					else if (temp_tile->GetToken()->GetType() == TokenType::MERCHANT)
+					else if (temp_tile->GetToken()->GetType() == MyTokenType::MERCHANT)
 					{
 						cout << 'M';
 						continue;
 					}
 
-					else if (temp_tile->GetToken()->GetType() == TokenType::PRIEST)
+					else if (temp_tile->GetToken()->GetType() == MyTokenType::PRIEST)
 					{
 						cout << 'P';
 						continue;
@@ -154,7 +154,7 @@ void Map::PrintMap() const
 
 		cout << endl;
 	}
-	cout << endl << "<===============>" << endl;
+	cout << endl << "=================" << endl;
 
 }
 
@@ -164,10 +164,34 @@ void Map::UpdateMap(Token* token, int x, int y)
 	if (token == nullptr)
 		tiles[x][y]->RemoveToken();
 	else
+	{
+		token->SetParent(tiles[x][y]);
 		tiles[x][y]->SetToken(token);
+
+		//look if we're puting the token in a tile that will belong to an area
+		vector <MapTile*> adjacents = GetAdjacentsToTile(x, y);
+		bool tile_with_area_parent = false;
+
+		for (int i = 0; i < adjacents.size() && !tile_with_area_parent; ++i)
+		{
+			if (adjacents[i]->GetAreaParent() != nullptr)
+			{
+				tile_with_area_parent = true;
+				adjacents[i]->GetAreaParent()->AddTile(tiles[x][y]);
+			}
+
+		}
+
+	}
 }
 
 bool Map::IsValidTile(int x, int y)
 {
 	return x < 16 && x >= 0 && y < 11 && y >= 0;
+}
+
+
+Area* Map::GetAreaByTile(int x, int y)
+{
+	return areas[GetTile(x, y)->GetAreaParent()->GetId()];
 }

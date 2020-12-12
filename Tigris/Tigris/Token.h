@@ -3,7 +3,7 @@
 
 #include <string>
 
-enum TokenType
+enum MyTokenType
 {
 	SETTLEMENT = 0,
 	TEMPLE,
@@ -30,11 +30,11 @@ class MapTile;
 class Token
 {
 public:
-	Token(TokenType type);
-	Token(TokenType type, PlayerType faction);
-	Token(TokenType type, int x, int y);
+	Token(MyTokenType type);
+	Token(MyTokenType type, PlayerType faction);
+	Token(MyTokenType type, MapTile* parent);
 	Token(std::string type);
-	TokenType GetType() { return token_type; };
+	MyTokenType GetType() { return token_type; };
 	MapTile* GetTileParent() { return tile_parent; }
 	void SetParent(MapTile* new_parent) { tile_parent = new_parent; }
 	void SetFaction(PlayerType new_faction) { faction = new_faction; }
@@ -42,8 +42,8 @@ public:
 	MapTile* tile_parent = nullptr;
 
 protected:
-	void SetColor(TokenType type);
-	TokenType token_type;
+	void SetColor(MyTokenType type);
+	MyTokenType token_type;
 	TokenColor token_color;
 
 	//Only for leaders!

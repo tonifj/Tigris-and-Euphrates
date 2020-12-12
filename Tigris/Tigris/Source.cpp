@@ -18,11 +18,24 @@ using namespace std;
 
 int main() {
 
-	cout << "Welcome to Tigris and Euphrates - Console Version" << endl;
-	cout << "The objective is to survive as a civilization against other players! Good luck!" << endl;
-	cout << "Type 'help' in any moment and I'll help you!" << endl;
-
 	GameManager* gm = new GameManager();
+	/*MapTile* new_tile = new MapTile(TileType::GROUND, 6, 6);
+	Token* new_token = new Token("farm");
+	new_tile->SetToken(new_token);
+
+	MapTile* new_tile2 = new MapTile(TileType::GROUND, 6, 5);
+	Token* new_token2 = new Token("market");
+	new_tile2->SetToken(new_token2);
+
+	Area* area = new Area(new_tile);
+	gm->GetMap()->AddArea(area);
+
+	gm->GetMap()->GetAreaById(10)->AddTile(new_tile2);
+
+	cout << new_tile2->GetAreaParent()->GetId();
+	*/
+
+
 
 	gm->WaitForPlayers();
 	gm->GameLoop();

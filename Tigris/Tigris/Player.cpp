@@ -5,10 +5,11 @@
 #include "Token.h"
 #include "Map.h"
 #include "MapTile.h"
+#include "Area.h"
 
 using namespace std;
 
-Token* Player::GetLeader(TokenType type)
+Token* Player::GetLeader(MyTokenType type)
 {
 	for (int i = 0; i < int(leaders.size()); ++i)
 	{
@@ -16,6 +17,8 @@ Token* Player::GetLeader(TokenType type)
 			return leaders[i];
 	}
 }
+
+
 
 Player::Player(PlayerType faction, vector<Token*>& tokens, int new_turn) : faction(faction)
 {
@@ -29,18 +32,18 @@ Player::Player(PlayerType faction, vector<Token*>& tokens, int new_turn) : facti
 	turn = new_turn;
 
 	leaders.reserve(4);
-	leaders.push_back(new Token(TokenType::KING, faction));
-	leaders.push_back(new Token(TokenType::FARMER, faction));
-	leaders.push_back(new Token(TokenType::MERCHANT, faction));
-	leaders.push_back(new Token(TokenType::PRIEST, faction));
+	leaders.push_back(new Token(MyTokenType::FARMER, faction));
+	leaders.push_back(new Token(MyTokenType::KING, faction));
+	leaders.push_back(new Token(MyTokenType::MERCHANT, faction));
+	leaders.push_back(new Token(MyTokenType::PRIEST, faction));
 
 	cout << "Your faction is: ";
 
 	switch (faction)
 	{
 	case PlayerType::BOW:
-			std::cout << " BOW" << endl;
-			break;
+		std::cout << " BOW" << endl;
+		break;
 
 	case PlayerType::BULL:
 		std::cout << " BULL" << endl;
@@ -56,53 +59,51 @@ Player::Player(PlayerType faction, vector<Token*>& tokens, int new_turn) : facti
 	}
 }
 
-void Player::Refresh()
-{
-
-}
-
 void Player::ShowPlayer()
 {
-	//cout << "Faction: ";
-
-	//switch (faction)
-	//{
-	//case PlayerType::BULL:
-	//	cout << "bull" << endl;
-	//	break;
-
-	//case PlayerType::BOW:
-	//	cout << "bow" << endl;
-	//	break;
-
-	//case PlayerType::LION:
-	//	cout << "lion" << endl;
-	//	break;
-
-	//case PlayerType::POT:
-	//	cout << "pot" << endl;
-	//	break;
-	//}
 
 	for (int i = 0; i < int(deck.size()); ++i)
-		cout << "Card " << i << ": " << deck[i]->GetType() << endl;
+	{
+		switch (deck[i]->GetType())
+		{
+		case MyTokenType::FARM:
+			cout << " farm ";
+			break;
 
 
+		case MyTokenType::TEMPLE:
+			cout << " temple ";
+			break;
+
+
+		case MyTokenType::MARKET:
+			cout << " market ";
+			break;
+
+		case MyTokenType::SETTLEMENT:
+			cout << " settlement ";
+			break;
+		}
+	}
 }
+
+
+
 
 void Player::AddPoint(TokenColor c)
 {
 
 }
 
-bool Player::PlaceToken(Map* map, TokenType type, int x, int y)
+bool Player::PlaceToken(Map* map, MyTokenType type, int x, int y)
 {
 	if (map->GetTile(x, y)->IsRiver())
 	{
-		if (type == TokenType::FARM)
-		{
-			map->UpdateMap(new Token(type, x, y), x, y);
 
+		if (type == MyTokenType::FARM)
+		{
+			map->UpdateMap(new Token(type, map->GetTile(x, y)), x, y);
+			map->PrintMap();
 			DiscardUsedToken(type);
 			return true;
 		}
@@ -116,11 +117,21 @@ bool Player::PlaceToken(Map* map, TokenType type, int x, int y)
 
 	else
 	{
-		if (type != TokenType::FARM)
+		if (type != MyTokenType::FARM)
 		{
-			map->UpdateMap(new Token(type, x, y), x, y);
+			if (type == type == MyTokenType::KING || type == MyTokenType::MERCHANT || type == MyTokenType::PRIEST || type == MyTokenType::FARMER)
+			{
+				map->UpdateMap(new Token(type, map->GetTile(x, y)), x, y);
+				map->PrintMap();
+			}
 
-			DiscardUsedToken(type);
+			else
+			{
+				map->UpdateMap(new Token(type, map->GetTile(x, y)), x, y);
+				map->PrintMap();
+				DiscardUsedToken(type);
+			}
+
 			return true;
 		}
 
@@ -132,7 +143,7 @@ bool Player::PlaceToken(Map* map, TokenType type, int x, int y)
 	}
 }
 
-void Player::DiscardUsedToken(TokenType type)
+void Player::DiscardUsedToken(MyTokenType type)
 {
 	int position_to_remove_token = 0;
 
@@ -148,5 +159,78 @@ void Player::DiscardUsedToken(TokenType type)
 
 	deck.erase(deck.begin() + position_to_remove_token);
 	deck.shrink_to_fit();
-	//ShowPlayer(); // ho faig per veure que s'ha borrat bé
+}
+
+//Returns false if there is no need to dissolve a kingdom
+bool Player::MoveLeader(Map* map, Area* area, MyTokenType type, int x, int y)
+{
+	//check if the leader is placed somewhere
+	if (GetLeader(type)->GetTileParent() != nullptr)
+	{
+		//check if the tile where the leader was placed was a kingdom and if it had more that 2 or more leaders
+		if (map->GetAreaByTile(GetLeader(type)->GetTileParent()->position_x, GetLeader(type)->GetTileParent()->position_y)->IsKingdom() &&
+			map->GetAreaByTile(GetLeader(type)->GetTileParent()->position_x, GetLeader(type)->GetTileParent()->position_y)->GetNumOfLeaders() >= 2)
+		{
+			//Remove token from old tile
+			GetLeader(type)->GetTileParent()->RemoveToken();
+
+			//Set new parent
+			GetLeader(type)->SetParent(map->GetTile(x, y));
+
+			//Add token to new tile
+			map->GetTile(x, y)->SetToken(GetLeader(type));
+
+			//Add tile to area
+			area->AddTile(map->GetTile(x, y));
+
+			map->UpdateMap(map->GetTile(x, y)->GetToken(), x, y);
+			map->PrintMap();
+
+			//this indicates if it's needed to dissolve a kingdom
+			return false;
+		}
+
+		else 
+		{
+			//remove area from the container
+			map->GetAreas().erase(GetLeader(type)->GetTileParent()->GetAreaParent()->GetId());
+
+			//Remove token from old tile
+			GetLeader(type)->GetTileParent()->RemoveToken();
+
+			//Set new parent
+			GetLeader(type)->SetParent(map->GetTile(x, y));
+
+			//Add token to new tile
+			map->GetTile(x, y)->SetToken(GetLeader(type));
+
+			//Add new tile to the area
+			area->AddTile(map->GetTile(x, y));
+
+			map->UpdateMap(map->GetTile(x, y)->GetToken(), x, y);
+			map->PrintMap();
+
+			return true;
+		}
+	}
+	
+	else
+	{
+		//Set new parent
+		GetLeader(type)->SetParent(map->GetTile(x, y));
+
+		//Add token to new tile
+		map->GetTile(x, y)->SetToken(GetLeader(type));
+
+		//create new area
+		Area* new_area = new Area(map->GetTile(x, y));
+		map->AddArea(new_area);
+
+		map->UpdateMap(map->GetTile(x, y)->GetToken(), x, y);
+		map->PrintMap();
+
+		return false;
+	}
+
+
 }

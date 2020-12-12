@@ -6,7 +6,7 @@
 #include <string>
 
 
-enum TokenType;
+enum MyTokenType;
 enum PlayerType;
 class Player;
 class Token;
@@ -27,7 +27,7 @@ public:
 private:
 	void CreatePlayer(std::vector<Token*>&);
 	bool ReadCommand(Player* player, std::string& command, int turn_actions);
-	bool CheckTokenAvailability(Player* player, TokenType type);
+	bool CheckTokenAvailability(Player* player, MyTokenType type);
 	int ActualPlayerActions() { return actual_player_turn_actions; }
 
 	//Commands
@@ -38,7 +38,7 @@ private:
 	void PrintPlayersVP();
 
 	//Tile functions
-	bool ProcessTile(Player* player, TokenType type);
+	bool ProcessTile(Player* player, MyTokenType type);
 	bool CheckValidTile(int x, int y);
 	bool CheckTileAvailability(int x, int y);
 	bool CheckValidTileName(std::string name) { return name == "settlement" || name == "farm" || name == "market" || name == "temple"; };
@@ -48,12 +48,12 @@ private:
 	bool ProcessLeader(Token* token, int x, int y);
 	bool IsTokenPartOfKingdom(Token* token);
 	std::vector <Token*> GetAreaLeaders(int area_id);
-	TokenType TranslateStringToToken(std::string name);
+	MyTokenType TranslateStringToToken(std::string name);
 	void MoveLeader(Token* leader, MapTile* old_tile, MapTile* new_tile);
 	void RemoveLeader(Token* leader);
 
 	//lmao
-	bool AreThereLeadersOfTheSameColor(Token* incoming_leader, Token* old_leader);
+	bool AreThereLeadersOfTheSameColor(Token* incoming_leader, Area* area);
 
 	void UpdateArea(Area* area, MapTile* new_tile);
 

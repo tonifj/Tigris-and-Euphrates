@@ -1,55 +1,56 @@
 #include "Token.h"
 #include "MapTile.h"
 
-void Token::SetColor(TokenType type)
+void Token::SetColor(MyTokenType type)
 {
-	if (type == TokenType::KING || type == TokenType::SETTLEMENT)
+	if (type == MyTokenType::KING || type == MyTokenType::SETTLEMENT)
 		token_color = TokenColor::BLACK;
 
-	else if (type == TokenType::PRIEST || type == TokenType::TEMPLE)
+	else if (type == MyTokenType::PRIEST || type == MyTokenType::TEMPLE)
 		token_color = TokenColor::RED;
 
-	else if (type == TokenType::FARMER || type == TokenType::FARM)
+	else if (type == MyTokenType::FARMER || type == MyTokenType::FARM)
 		token_color = TokenColor::BLUE;
 
-	else if (type == TokenType::MERCHANT || type == TokenType::MARKET)
+	else if (type == MyTokenType::MERCHANT || type == MyTokenType::MARKET)
 		token_color = TokenColor::GREEN;
 }
 
-Token::Token(TokenType type) : token_type(type)
+Token::Token(MyTokenType type)
 {
+	token_type = type;
 	SetColor(type);
 }
 
 Token::Token(std::string type)
 {
 	if (type == "settlement")
-		token_type = TokenType::SETTLEMENT;
+		token_type = MyTokenType::SETTLEMENT;
 
 	else if (type == "farm")
-		token_type = TokenType::FARM;
+		token_type = MyTokenType::FARM;
 
 	else if (type == "market")
-		token_type = TokenType::MARKET;
+		token_type = MyTokenType::MARKET;
 
 	else if (type == "temple")
-		token_type = TokenType::TEMPLE;
+		token_type = MyTokenType::TEMPLE;
 
 	SetColor(token_type);
 }
 
-Token::Token(TokenType type, PlayerType faction) : token_type(type), faction(faction) { SetColor(type); }
+Token::Token(MyTokenType type, PlayerType faction) : token_type(type), faction(faction) { SetColor(type); }
 
-Token::Token(TokenType type, int x, int y) : token_type(type)
+Token::Token(MyTokenType type, MapTile* parent) : token_type(type)
 {
 	//adjacents = vector <Token*>();
 	//adjacents.reserve(4);
 
 	SetColor(type);
 
-	if (type == TokenType::FARM)
-		tile_parent = new MapTile(TileType::RIVER, x, y);
+	if (type == MyTokenType::FARM)
+		tile_parent = parent;
 
 	else
-		tile_parent = new MapTile(TileType::GROUND, x, y);
+		tile_parent = parent;
 }

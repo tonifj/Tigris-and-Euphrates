@@ -13,9 +13,10 @@ enum PlayerType
 };
 
 enum TokenColor;
-enum TokenType;
+enum MyTokenType;
 class Token;
 class Map;
+class Area;
 class Player
 {
 	struct VictoryPoints
@@ -29,7 +30,6 @@ class Player
 public:
 	Player(PlayerType faction, std::vector<Token*>& tokens, int new_turn);
 
-	void Refresh();
 	std::vector<Token*> GetDeck() { return deck; };
 	void ShowPlayer();
 	void NowPlaying() { is_playing = true; }
@@ -41,12 +41,13 @@ public:
 	VictoryPoints GetVP() { return points; }
 
 	//Actions
-	bool PlaceToken(Map* map, TokenType type, int x, int y);
+	bool PlaceToken(Map* map, MyTokenType type, int x, int y);
+	bool MoveLeader(Map* map, Area* area, MyTokenType type, int x, int y);
 	void AcquireNewToken(Token* new_token) { deck.push_back(new_token); }
-	Token* GetLeader(TokenType type);
+	Token* GetLeader(MyTokenType type);
 
 private:
-	void DiscardUsedToken(TokenType type);
+	void DiscardUsedToken(MyTokenType type);
 	void AddPoint(TokenColor color);
 
 	bool is_playing = false;
@@ -56,6 +57,7 @@ private:
 	VictoryPoints points;
 	std::vector<Token*> deck;
 	std::vector<Token*> leaders;
+
 };
 
 
