@@ -526,31 +526,43 @@ void GameManager::AddPointsToPlayer(Area* area, Token* token)
 {
 	vector <Token*> area_leaders = area->GetLeaders();
 	
-	for (int i = 0; i < area_leaders.size(); ++i)
+	//if there is only a king, add points to the owner of the king
+	if (area_leaders.size() == 1 && area_leaders[0]->GetType() == MyTokenType::KING)
 	{
-		if (area_leaders[i]->GetColor() == token->GetColor())
-		{
-			switch (token->GetType())
-			{
-			case MyTokenType::FARM :
-				GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::BLUE);
-				break;
-
-			case MyTokenType::MARKET:
-				GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::GREEN);
-				break;
-
-			case MyTokenType::SETTLEMENT:
-				GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::BLACK);
-				break;
-
-			case MyTokenType::TEMPLE:
-				GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::RED);
-				break;
-			}
-		}
-
+		GetPlayerByDinasty(area_leaders[0]->GetFaction())->UpdatePoints(token->GetColor());
 	}
+
+	//if there are more leaders, add points depending on the correspondant leader!
+	else
+	{
+		for (int i = 0; i < area_leaders.size(); ++i)
+		{
+			if (area_leaders[i]->GetColor() == token->GetColor())
+			{
+				switch (token->GetType())
+				{
+				case MyTokenType::FARM:
+					GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::BLUE);
+					break;
+
+				case MyTokenType::MARKET:
+					GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::GREEN);
+					break;
+
+				case MyTokenType::SETTLEMENT:
+					GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::BLACK);
+					break;
+
+				case MyTokenType::TEMPLE:
+					GetPlayerByDinasty(area_leaders[i]->GetFaction())->UpdatePoints(TokenColor::RED);
+					break;
+				}
+			}
+
+		}
+	}
+
+	
 
 }
 
