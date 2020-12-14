@@ -35,6 +35,7 @@ private:
 	bool CommandTile(Player* player);
 	bool CommandRefresh(Player* player);
 	bool CommandLeader(Player* player);
+	bool CommandTreasure(Player* player);
 
 	void PrintPlayersVP();
 
@@ -48,7 +49,6 @@ private:
 	//Leader functions
 	bool ProcessLeader(Token* token, int x, int y);
 	bool IsTokenPartOfKingdom(Token* token);
-	std::vector <Token*> GetAreaLeaders(int area_id);
 	MyTokenType TranslateStringToToken(std::string name);
 
 	//lmao

@@ -90,9 +90,9 @@ void Player::ShowPlayer()
 
 
 
-void Player::AddPoint(TokenColor c)
+void Player::AddTreasure()
 {
-
+	++num_treasures;
 }
 
 bool Player::PlaceToken(Map* map, MyTokenType type, int x, int y)

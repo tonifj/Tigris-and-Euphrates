@@ -503,9 +503,6 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 						return player->PlaceToken(map, type, x, y);
 					}
 				}
-
-
-
 			}
 
 			cout << "exception: board space is already occupied" << endl;
@@ -520,7 +517,42 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 	return false;
 }
 
+bool GameManager::CommandTreasure(Player* player)
+{
+	int x, y;
 
+	cin >> x >> y;
+
+	if (CheckValidTile(x, y))
+	{
+		if (map->GetTile(x, y)->GetToken()->GetType() == MyTokenType::TEMPLE)
+		{
+			if (map->GetTile(x, y)->GetToken()->HasTreasure())
+			{
+				map->GetTile(x, y)->GetToken()->RemoveTreasure();
+				player->AddTreasure();
+			}
+
+			else
+			{
+				cout << "exception: this temple hasn't any treasure" << endl;
+				return false;
+			}
+		}
+
+		else
+		{
+			cout << "exception: treasures can only be found at temples" << endl;
+			return false;
+		}
+	}
+
+	else
+	{
+		cout << "exception: invalid board space position" << endl;
+		return false;
+	}
+}
 
 void GameManager::AddPointsToPlayer(Area* area, Token* token)
 {

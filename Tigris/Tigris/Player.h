@@ -46,10 +46,11 @@ public:
 	bool MoveLeader(Map* map, Area* area, MyTokenType type, int x, int y);
 	void AcquireNewToken(Token* new_token) { deck.push_back(new_token); }
 	Token* GetLeader(MyTokenType type);
+	void AddTreasure();
+
 
 private:
 	void DiscardUsedToken(MyTokenType type);
-	void AddPoint(TokenColor color);
 
 	bool is_playing = false;
 	int num_treasures = 0;
