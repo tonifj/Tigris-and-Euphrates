@@ -145,11 +145,16 @@ void Map::PrintMap() const
 						cout << 'P';
 						continue;
 					}
+
+					else if (temp_tile->GetToken()->GetType() == MyTokenType::CATASTROPHE)
+					{
+						cout << 'X';
+						continue;
+					}
 				}
 				else
 					cout << '-';
 			}
-
 		}
 
 		cout << endl;

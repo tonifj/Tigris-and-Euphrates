@@ -1,6 +1,7 @@
 #include <iostream>
 #include <climits>
 #include <windows.h>
+#include <queue>
 
 #include "GameManager.h"
 #include "Map.h"
@@ -99,8 +100,11 @@ void GameManager::WaitForPlayers()
 				++token_counter;
 			}
 
-			else cout << "enter a valid token!" << endl;
-
+			else
+			{
+				cout << "enter a valid token!" << endl;
+				ClearInput();
+			}
 		}
 
 		//Once we have 6 tiles, create a player object with those tiles and a random faction
@@ -148,7 +152,7 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 
 		else if (command == "treasure")
 		{
-			//pick treasure
+			return CommandTreasure(player);
 		}
 
 		else if (command == "catastrophe")
@@ -158,7 +162,7 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 
 		else if (command == "revolt")
 		{
-			//become marx
+			return CommandRevolt();
 		}
 
 		else if (command == "war")
@@ -498,7 +502,7 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 						prev_kingdom->AddTile(map->GetTile(x, y));
 
 						//add points
-						AddPointsToPlayer(prev_kingdom, map->GetTile(x, y)->GetToken());
+						AddPointsTokenPlaced(prev_kingdom, map->GetTile(x, y)->GetToken());
 
 						return player->PlaceToken(map, type, x, y);
 					}
@@ -520,17 +524,38 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 bool GameManager::CommandTreasure(Player* player)
 {
 	int x, y;
+	bool is_merchant_here = false;
+
 
 	cin >> x >> y;
 
 	if (CheckValidTile(x, y))
 	{
-		if (map->GetTile(x, y)->GetToken()->GetType() == MyTokenType::TEMPLE)
+
+		if (map->GetTile(x, y)->GetToken() != nullptr && map->GetTile(x, y)->GetToken()->GetType() == MyTokenType::TEMPLE)
 		{
 			if (map->GetTile(x, y)->GetToken()->HasTreasure())
 			{
-				map->GetTile(x, y)->GetToken()->RemoveTreasure();
-				player->AddTreasure();
+				for (int i = 0; i < map->GetAreaByTile(x, y)->GetLeaders().size() && !is_merchant_here; ++i)
+				{
+					if (map->GetAreaByTile(x, y)->GetLeaders()[i]->GetType() == MyTokenType::MERCHANT &&
+						map->GetAreaByTile(x, y)->GetLeaders()[i]->GetFaction() == current_player->GetFaction())
+					{
+						is_merchant_here = true;
+					}
+				}
+
+				if (is_merchant_here)
+				{
+					map->GetTile(x, y)->GetToken()->RemoveTreasure();
+					player->AddTreasure();
+				}
+
+				else
+				{
+					cout << "exception: there is no merchant of your faction in the kingdom" << endl;
+					return false;
+				}
 			}
 
 			else
@@ -545,6 +570,7 @@ bool GameManager::CommandTreasure(Player* player)
 			cout << "exception: treasures can only be found at temples" << endl;
 			return false;
 		}
+
 	}
 
 	else
@@ -554,10 +580,166 @@ bool GameManager::CommandTreasure(Player* player)
 	}
 }
 
-void GameManager::AddPointsToPlayer(Area* area, Token* token)
+bool GameManager::CheckValidLeader(MyTokenType type)
+{
+	return type == MyTokenType::KING || type == MyTokenType::MERCHANT || type == MyTokenType::PRIEST || type == MyTokenType::FARMER;
+}
+
+bool GameManager::CommandCatastrophe()
+{
+	int x, y;
+	cin >> x >> y;
+
+	if (CheckValidTile(x, y))
+	{
+		if (!CheckValidLeader(map->GetTile(x, y)->GetToken()->GetType()))
+		{
+			if (current_player->GetNumCatastropheTokens() > 0)
+			{
+				current_player->SubtractCatastropheTile();
+				ProcessCatastrophe(x, y);
+			}
+
+			else
+			{
+				cout << "exception: you have no more catastrophe tokens available" << endl;
+				return false;
+			}
+		}
+
+		else
+		{
+			cout << "exception: catastrophe tokens cannot be placed over a leader" << endl;
+			return false;
+		}
+
+	}
+
+	else
+	{
+		cout << "exception: invalid board space position" << endl;
+		return false;
+	}
+}
+
+bool GameManager::ProcessCatastrophe(int x, int y)
+{
+	map->GetTile(x, y)->SetToken(new Token(MyTokenType::CATASTROPHE));
+	return true;
+}
+
+bool GameManager::CommandRevolt()
+{
+	int x, y;
+	cin >> x >> y;
+
+	if (CheckValidTile(x, y))
+	{
+		if (CheckValidLeader(map->GetTile(x, y)->GetToken()->GetType()))
+		{
+			if (map->GetAreaByTile(x, y)->RevoltAvailable())
+				return ProcessRevolt(x, y);
+
+			else
+			{
+				cout << "exception: revolt is not available" << endl;
+				return false;
+			}
+		}
+
+		else
+		{
+			cout << "exception: you must select a leader" << endl;
+			return false;
+		}
+	}
+
+	else
+	{
+		cout << "exception: invalid board space position" << endl;
+		return false;
+	}
+}
+
+bool GameManager::ProcessRevolt(int x, int y)
+{
+	vector <Token*> leaders_in_area = map->GetTile(x, y)->GetAreaParent()->GetLeaders();
+
+	Token *prev_leader = nullptr, *attack_leader = nullptr, *defend_leader = nullptr;
+	bool proceed = false;
+	vector <MapTile*> defender_adj_temples, attacker_adj_temples;
+	Player* defender = nullptr;
+	int defender_temples;
+	int attacker_temples;
+
+	for (int i = 0; i < leaders_in_area.size() && !proceed; ++i)
+	{
+		prev_leader = leaders_in_area[i];
+
+		for (int j = 0; j < leaders_in_area.size() && !proceed; ++j)
+		{
+			if (j != i)
+			{
+				if (prev_leader->GetColor() == leaders_in_area[j]->GetColor() && prev_leader->GetFaction() != leaders_in_area[j]->GetFaction())
+				{
+					if (prev_leader->GetFaction() == current_player->GetFaction())
+					{
+						attacker_adj_temples = map->GetAdjacentsToTile(prev_leader->GetTileParent()->position_x, prev_leader->GetTileParent()->position_y);
+						defender_adj_temples = map->GetAdjacentsToTile(leaders_in_area[j]->GetTileParent()->position_x, leaders_in_area[j]->GetTileParent()->position_y);
+						defender = GetPlayerByDinasty(leaders_in_area[j]->GetFaction());
+						attack_leader = prev_leader;
+						defend_leader = leaders_in_area[j];
+					}
+
+					else
+					{
+						defender_adj_temples = map->GetAdjacentsToTile(prev_leader->GetTileParent()->position_x, prev_leader->GetTileParent()->position_y);
+						attacker_adj_temples = map->GetAdjacentsToTile(leaders_in_area[j]->GetTileParent()->position_x, leaders_in_area[j]->GetTileParent()->position_y);
+						defender = GetPlayerByDinasty(prev_leader->GetFaction());
+						attack_leader = leaders_in_area[j];
+						defend_leader = prev_leader;
+					}
+					proceed = true;
+				}
+			}
+		}
+	}
+
+	if (proceed)
+	{
+		defender_temples = defender->GetTemplesInDeck();
+		attacker_temples = current_player->GetTemplesInDeck();
+
+		for (int i = 0; i < defender_adj_temples.size(); ++i)
+		{
+			if (defender_adj_temples[i]->GetToken()!= nullptr && defender_adj_temples[i]->GetToken()->GetType() == MyTokenType::TEMPLE)
+				++defender_temples;
+		}
+
+		for (int i = 0; i < attacker_adj_temples.size(); ++i)
+		{
+			if (attacker_adj_temples[i]->GetToken() != nullptr && attacker_adj_temples[i]->GetToken()->GetType() == MyTokenType::TEMPLE)
+				++attacker_temples;
+		}
+	}
+
+	if (defender_temples >= attacker_temples)
+	{
+		AddPointsRevoltWon(defender, current_player, attack_leader);
+	}
+
+	else
+	{
+		AddPointsRevoltWon(current_player, defender, defend_leader);
+	}
+
+	return true;
+}
+
+void GameManager::AddPointsTokenPlaced(Area* area, Token* token)
 {
 	vector <Token*> area_leaders = area->GetLeaders();
-	
+
 	//if there is only a king, add points to the owner of the king
 	if (area_leaders.size() == 1 && area_leaders[0]->GetType() == MyTokenType::KING)
 	{
@@ -594,10 +776,55 @@ void GameManager::AddPointsToPlayer(Area* area, Token* token)
 		}
 	}
 
-	
+
 
 }
 
+void GameManager::AddPointsRevoltWon(Player* winner, Player* loser, Token* loser_leader)
+{
+	bool no_more_temples_found = false;
+
+	winner->UpdatePoints(TokenColor::RED);
+
+	queue <int> positions_to_remove;
+	for (int i = 0; i < loser->GetDeck().size(); ++i)
+	{
+		if (loser->GetDeck()[i]->GetType() == MyTokenType::TEMPLE)
+			positions_to_remove.push(i);
+	}
+
+	//remove temples from loser's deck
+	while (!positions_to_remove.empty())
+	{
+		loser->GetDeck().erase(loser->GetDeck().begin() + positions_to_remove.front());
+		positions_to_remove.pop();
+	}
+
+	//remove leader from board and adjacent temples (remove tile from area)
+	vector<MapTile*> adjacents_to_loser_leader = map->GetAdjacentsToTile(loser_leader->GetTileParent()->position_x, loser_leader->GetTileParent()->position_y);
+	map->GetTile(loser_leader->GetTileParent()->position_x, loser_leader->GetTileParent()->position_y)->RemoveToken();
+	map->PrintMap();
+
+	/*int i = 0;
+	while (!no_more_temples_found)
+	{
+		if (adjacents_to_loser_leader[i]->GetToken() != nullptr && adjacents_to_loser_leader[i]->GetToken()->GetType() == MyTokenType::TEMPLE)
+		{
+			map->GetTile(adjacents_to_loser_leader[i]->position_x, adjacents_to_loser_leader[i]->position_y)->RemoveToken();
+			adjacents_to_loser_leader.erase(adjacents_to_loser_leader.begin() + i);
+		}
+
+		int temples_found = 0;
+		for (int j = 0; i < adjacents_to_loser_leader.size(); ++i)
+		{
+			if (adjacents_to_loser_leader[i]->GetToken() != nullptr && adjacents_to_loser_leader[i]->GetToken()->GetType() == MyTokenType::TEMPLE)
+				++temples_found;
+		}
+
+		if (temples_found == 0)
+			no_more_temples_found = true;
+	}*/
+}
 
 bool GameManager::CommandRefresh(Player* player)
 {
@@ -734,3 +961,5 @@ void GameManager::GameLoop()
 		//end_game = true;
 	}
 }
+
+

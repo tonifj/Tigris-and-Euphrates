@@ -20,7 +20,7 @@ public:
 	const bool IsRiver() const { return tile_type == TileType::RIVER; };
 	void SetToken(Token* new_token);
 	Token* GetToken() const { return token; }
-	void RemoveToken() { token = nullptr; }
+	void RemoveToken();
 	void SetAreaParent(Area* area) { area_parent = area; }
 	Area* GetAreaParent() { return area_parent; }
 

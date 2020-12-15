@@ -87,14 +87,6 @@ void Player::ShowPlayer()
 	}
 }
 
-
-
-
-void Player::AddTreasure()
-{
-	++num_treasures;
-}
-
 bool Player::PlaceToken(Map* map, MyTokenType type, int x, int y)
 {
 	if (map->GetTile(x, y)->IsRiver())
@@ -253,6 +245,16 @@ bool Player::MoveLeader(Map* map, Area* area, MyTokenType type, int x, int y)
 
 		return false;
 	}
+}
 
+int Player::GetTemplesInDeck()
+{
+	int num_temples = 0;
+	for (int i = 0; i < deck.size(); ++i)
+	{
+		if (deck[i]->GetType() == MyTokenType::TEMPLE)
+			++num_temples;
+	}
 
+	return num_temples;
 }

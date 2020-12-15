@@ -54,3 +54,8 @@ Token::Token(MyTokenType type, MapTile* parent) : token_type(type)
 	else
 		tile_parent = parent;
 }
+
+bool Token::operator==(Token& token)
+{
+	return	token.GetType() == token_type;
+}

@@ -1,37 +1,29 @@
-﻿  Area.cpp
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\area.cpp(11): warning C4018: '<': no coinciden signed/unsigned
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\area.cpp(24): warning C4018: '<': no coinciden signed/unsigned
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\area.cpp(41): warning C4018: '<': no coinciden signed/unsigned
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\area.cpp(54): warning C4018: '<': no coinciden signed/unsigned
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\area.cpp(79): warning C4018: '<': no coinciden signed/unsigned
-  GameManager.cpp
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(460): warning C4018: '<': no coinciden signed/unsigned
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(570): warning C4018: '<': no coinciden signed/unsigned
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(616): warning C4805: '==': combinación no segura del tipo 'int' y el tipo 'bool' en la operación
-  Map.cpp
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\map.cpp(175): warning C4018: '<': no coinciden signed/unsigned
-  MapTile.cpp
-  Player.cpp
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\player.cpp(122): warning C4806: '==': operación no segura: ningún valor del tipo 'bool' promovido al tipo 'MyTokenType' puede igualar la constante proporcionada
-  Source.cpp
-  Token.cpp
-  Generando código...
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\player.cpp(19): warning C4715: 'Player::GetLeader': no todas las rutas de acceso de control devuelven un valor
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(273): warning C4715: 'GameManager::GetPlayerByDinasty': no todas las rutas de acceso de control devuelven un valor
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(336): warning C4715: 'GameManager::TranslateStringToToken': no todas las rutas de acceso de control devuelven un valor
-c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(555): warning C4715: 'GameManager::CommandTreasure': no todas las rutas de acceso de control devuelven un valor
+﻿  GameManager.cpp
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(464): warning C4018: '<': no coinciden signed/unsigned
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(539): warning C4018: '<': no coinciden signed/unsigned
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(675): warning C4018: '<': no coinciden signed/unsigned
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(679): warning C4018: '<': no coinciden signed/unsigned
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(713): warning C4018: '<': no coinciden signed/unsigned
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(719): warning C4018: '<': no coinciden signed/unsigned
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(752): warning C4018: '<': no coinciden signed/unsigned
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(790): warning C4018: '<': no coinciden signed/unsigned
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(843): warning C4805: '==': combinación no segura del tipo 'int' y el tipo 'bool' en la operación
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(277): warning C4715: 'GameManager::GetPlayerByDinasty': no todas las rutas de acceso de control devuelven un valor
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(340): warning C4715: 'GameManager::TranslateStringToToken': no todas las rutas de acceso de control devuelven un valor
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(623): warning C4715: 'GameManager::CommandCatastrophe': no todas las rutas de acceso de control devuelven un valor
+c:\users\gt73evr\documents\repositoris\tigris-and-euphrates\tigris\tigris\gamemanager.cpp(581): warning C4715: 'GameManager::CommandTreasure': no todas las rutas de acceso de control devuelven un valor
   Tigris.vcxproj -> C:\Users\GT73EVR\Documents\Repositoris\Tigris-and-Euphrates\Tigris\Debug\Tigris.exe
 
 Resumen del rendimiento del proyecto:
-     7949 ms C:\Users\GT73EVR\Documents\Repositoris\Tigris-and-Euphrates\Tigris\Tigris\Tigris.vcxproj   1 llamadas
-               7949 ms Build                                      1 llamadas
+     2224 ms C:\Users\GT73EVR\Documents\Repositoris\Tigris-and-Euphrates\Tigris\Tigris\Tigris.vcxproj   1 llamadas
+               2224 ms Build                                      1 llamadas
 
 Resumen del rendimiento de destino:
         0 ms AfterResourceCompile                       1 llamadas
         0 ms PreLinkEvent                               1 llamadas
         0 ms PrepareResourceNames                       1 llamadas
         0 ms CreateCustomManifestResourceNames          1 llamadas
-        0 ms AssignTargetPaths                          1 llamadas
+        0 ms SplitResourcesByCulture                    1 llamadas
         0 ms ComputeManifestInputsTargets               1 llamadas
         0 ms ComputeLinkInputsFromProject               1 llamadas
         0 ms ComputeCLGeneratedLinkInputs               1 llamadas
@@ -40,14 +32,14 @@ Resumen del rendimiento de destino:
         0 ms ComputeRCGeneratedLinkInputs               1 llamadas
         0 ms ComputeRCOutputs                           1 llamadas
         0 ms BeforeLink                                 1 llamadas
-        0 ms ComputeLegacyManifestEmbedding             1 llamadas
         0 ms BuildLinkTraverse                          1 llamadas
         0 ms BuildCompile                               1 llamadas
         0 ms _BuildCompileAction                        1 llamadas
         0 ms AfterBuildCompileEvent                     1 llamadas
         0 ms _ResourceCompile                           1 llamadas
         0 ms BeforeResourceCompile                      1 llamadas
-        0 ms ComputeLinkImportLibraryOutputsForClean    1 llamadas
+        0 ms _ClCompile                                 1 llamadas
+        0 ms ComputeLinkSwitches                        1 llamadas
         0 ms AfterLink                                  1 llamadas
         0 ms _Link                                      1 llamadas
         0 ms _ALink                                     1 llamadas
@@ -56,96 +48,96 @@ Resumen del rendimiento de destino:
         0 ms _BuildLinkAction                           1 llamadas
         0 ms PostBuildEvent                             1 llamadas
         0 ms PrepareForRun                              1 llamadas
+        0 ms CopyFilesToOutputDirectory                 1 llamadas
         0 ms _CheckForCompileOutputs                    1 llamadas
         0 ms _CopySourceItemsToOutputDirectory          1 llamadas
+        0 ms GetCopyToOutputDirectoryItems              1 llamadas
+        0 ms AfterClCompile                             1 llamadas
         0 ms GetCopyToOutputDirectoryXamlAppDefs        1 llamadas
-        0 ms _Deploy                                    1 llamadas
-        0 ms _ClCompile                                 1 llamadas
         0 ms _Appverifier                               1 llamadas
-        0 ms _GenerateSatelliteAssemblyInputs           1 llamadas
+        0 ms CreateSatelliteAssemblies                  1 llamadas
         0 ms _BscMake                                   1 llamadas
         0 ms MakeDirsForBscMake                         1 llamadas
         0 ms ComputeCLCompileGeneratedSbrFiles          1 llamadas
         0 ms _XdcMake                                   1 llamadas
         0 ms MakeDirsForXdcMake                         1 llamadas
-        0 ms ComputeCLCompileGeneratedXDCFiles          1 llamadas
         0 ms ResolvedXDCMake                            1 llamadas
         0 ms _Manifest                                  1 llamadas
-        0 ms CreateSatelliteAssemblies                  1 llamadas
-        0 ms AfterClCompile                             1 llamadas
-        0 ms Build                                      1 llamadas
-        0 ms ComputeMIDLGeneratedCompileInputs          1 llamadas
-        0 ms BeforeResolveReferences                    1 llamadas
-        0 ms ResolveAssemblyReferences                  1 llamadas
-        0 ms AfterResolveReferences                     1 llamadas
-        0 ms ResolveReferences                          1 llamadas
-        0 ms SetCABuildNativeEnvironmentVariables       1 llamadas
+        0 ms _Deploy                                    1 llamadas
         0 ms SelectClCompile                            1 llamadas
+        0 ms Build                                      1 llamadas
+        0 ms BuildGenerateSourcesTraverse               1 llamadas
+        0 ms ResolveReferences                          1 llamadas
+        0 ms ExpandSDKReferences                        1 llamadas
+        0 ms SelectCustomBuild                          1 llamadas
         0 ms _PrepareForBuild                           1 llamadas
         0 ms BeforeBuildGenerateSources                 1 llamadas
-        0 ms PlatformPrepareForBuild                    1 llamadas
-        0 ms PreBuildEvent                              1 llamadas
-        0 ms _SelectedFiles                             1 llamadas
-        0 ms GetResolvedWinMD                           1 llamadas
-        0 ms _Xsd                                       1 llamadas
-        0 ms ExpandSDKReferences                        1 llamadas
-        0 ms GetReferenceAssemblyPaths                  1 llamadas
         0 ms ResolveSDKReferences                       1 llamadas
-        0 ms _Midl                                      1 llamadas
-        0 ms SelectCustomBuild                          1 llamadas
-        0 ms MakeDirsForCl                              1 llamadas
-        0 ms PrepareProjectReferences                   1 llamadas
+        0 ms SetCABuildNativeEnvironmentVariables       1 llamadas
+        0 ms PlatformPrepareForBuild                    1 llamadas
+        0 ms _SelectedFiles                             1 llamadas
+        0 ms CopyFileToFolders                          1 llamadas
+        0 ms _Xsd                                       1 llamadas
+        0 ms MakeDirsForMidl                            1 llamadas
+        0 ms ComputeMIDLGeneratedCompileInputs          1 llamadas
+        0 ms AfterResolveReferences                     1 llamadas
         0 ms AfterMidl                                  1 llamadas
-        0 ms BeforeClCompile                            1 llamadas
-        0 ms BuildCompileTraverse                       1 llamadas
+        0 ms GetResolvedWinMD                           1 llamadas
+        0 ms AfterBuildGenerateSources                  1 llamadas
+        0 ms _PrepareForReferenceResolution             1 llamadas
+        0 ms BeforeResolveReferences                    1 llamadas
+        0 ms _SplitProjectReferencesByFileExistence     1 llamadas
+        0 ms PrepareProjectReferences                   1 llamadas
+        0 ms ResolveProjectReferences                   1 llamadas
+        0 ms GetFrameworkPaths                          1 llamadas
+        0 ms _Midl                                      1 llamadas
         0 ms ComputeCLInputPDBName                      1 llamadas
+        0 ms BuildCompileTraverse                       1 llamadas
+        0 ms BuildGenerateSources                       1 llamadas
+        0 ms GetReferenceAssemblyPaths                  1 llamadas
         0 ms _BuildGenerateSourcesAction                1 llamadas
         0 ms AfterBuildGenerateSourcesEvent             1 llamadas
-        0 ms AfterBuildGenerateSources                  1 llamadas
-        0 ms BuildGenerateSources                       1 llamadas
-        1 ms MakeDirsForResourceCompile                 1 llamadas
-        1 ms GetFrameworkPaths                          1 llamadas
-        1 ms _CheckWindowsSDKInstalled                  1 llamadas
-        1 ms SetBuildDefaultEnvironmentVariables        1 llamadas
-        1 ms SplitResourcesByCulture                    1 llamadas
-        1 ms DoLinkOutputFilesMatch                     1 llamadas
+        0 ms BeforeClCompile                            1 llamadas
+        0 ms ResolveAssemblyReferences                  1 llamadas
+        1 ms ComputeCLCompileGeneratedXDCFiles          1 llamadas
+        1 ms _GenerateSatelliteAssemblyInputs           1 llamadas
+        1 ms SetTelemetryEnvironmentVariables           1 llamadas
         1 ms AssignProjectConfiguration                 1 llamadas
-        1 ms CopyFilesToOutputDirectory                 1 llamadas
-        1 ms ComputeReferenceCLInput                    1 llamadas
-        1 ms ComputeLinkSwitches                        1 llamadas
-        1 ms _SplitProjectReferencesByFileExistence     1 llamadas
-        1 ms FixupCLCompileOptions                      1 llamadas
-        1 ms MakeDirsForMidl                            1 llamadas
-        1 ms ComputeCLOutputs                           1 llamadas
-        1 ms _PrepareForReferenceResolution             1 llamadas
-        1 ms BuildGenerateSourcesTraverse               1 llamadas
-        1 ms WarnCompileDuplicatedFilename              1 llamadas
+        1 ms ComputeLegacyManifestEmbedding             1 llamadas
+        1 ms AssignTargetPaths                          1 llamadas
         1 ms RegisterOutput                             1 llamadas
+        1 ms PreBuildEvent                              1 llamadas
+        1 ms ComputeCLOutputs                           1 llamadas
+        1 ms SetBuildDefaultEnvironmentVariables        1 llamadas
+        1 ms MakeDirsForCl                              1 llamadas
         1 ms MakeDirsForLink                            1 llamadas
-        1 ms GetCopyToOutputDirectoryItems              1 llamadas
         1 ms _GetProjectReferenceTargetFrameworkProperties   1 llamadas
+        1 ms ComputeLinkImportLibraryOutputsForClean    1 llamadas
+        1 ms ComputeReferenceCLInput                    1 llamadas
+        1 ms _CheckWindowsSDKInstalled                  1 llamadas
+        1 ms DoLinkOutputFilesMatch                     1 llamadas
+        1 ms MakeDirsForResourceCompile                 1 llamadas
+        2 ms InitializeBuildStatus                      1 llamadas
         2 ms FinalizeBuildStatus                        1 llamadas
-        5 ms CopyFileToFolders                          1 llamadas
-        7 ms SetTelemetryEnvironmentVariables           1 llamadas
-        7 ms PrepareForBuild                            1 llamadas
-        9 ms InitializeBuildStatus                      1 llamadas
-       17 ms ResolveProjectReferences                   1 llamadas
-       19 ms _CheckForInvalidConfigurationAndPlatform   1 llamadas
-      688 ms Link                                       1 llamadas
-     7168 ms ClCompile                                  1 llamadas
+        2 ms WarnCompileDuplicatedFilename              1 llamadas
+        3 ms _CheckForInvalidConfigurationAndPlatform   1 llamadas
+        3 ms PrepareForBuild                            1 llamadas
+        4 ms FixupCLCompileOptions                      1 llamadas
+      328 ms Link                                       1 llamadas
+     1860 ms ClCompile                                  1 llamadas
 
 Resumen del rendimiento de la tarea:
+        0 ms Message                                    3 llamadas
+        0 ms AssignProjectConfiguration                 1 llamadas
+        0 ms ReadLinesFromFile                          1 llamadas
+        0 ms WriteLinesToFile                           1 llamadas
+        0 ms GetOutOfDateItems                          1 llamadas
         0 ms AssignTargetPath                           6 llamadas
         0 ms AssignCulture                              1 llamadas
-        1 ms Message                                    3 llamadas
-        1 ms ReadLinesFromFile                          1 llamadas
-        1 ms AssignProjectConfiguration                 1 llamadas
-        1 ms Delete                                     1 llamadas
-        1 ms WriteLinesToFile                           1 llamadas
+        0 ms Delete                                     1 llamadas
         1 ms MSBuild                                    1 llamadas
-        3 ms SetEnv                                     8 llamadas
-        3 ms MakeDir                                    9 llamadas
-        5 ms GetOutOfDateItems                          1 llamadas
-        8 ms Touch                                      2 llamadas
-      686 ms Link                                       1 llamadas
-     7167 ms CL                                         1 llamadas
+        1 ms MakeDir                                    9 llamadas
+        2 ms SetEnv                                     8 llamadas
+        2 ms Touch                                      2 llamadas
+      326 ms Link                                       1 llamadas
+     1859 ms CL                                         1 llamadas

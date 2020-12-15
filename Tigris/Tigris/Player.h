@@ -37,22 +37,28 @@ public:
 	bool IsPlaying() { return is_playing; }
 	bool GetTurn() { return turn; }
 	int GetNumTreasures() { return num_treasures; }
+	int GetNumCatastropheTokens() { return num_catastrophe_tiles; }
 	PlayerType GetFaction() { return faction; }
 	VictoryPoints GetVP() { return points; }
 	void UpdatePoints(TokenColor color);
+	int GetTemplesInDeck();
+	int GetTemplesNearLeader(Token*);
 
 	//Actions
 	bool PlaceToken(Map* map, MyTokenType type, int x, int y);
 	bool MoveLeader(Map* map, Area* area, MyTokenType type, int x, int y);
 	void AcquireNewToken(Token* new_token) { deck.push_back(new_token); }
 	Token* GetLeader(MyTokenType type);
-	void AddTreasure();
+
+	void AddTreasure() { ++num_treasures; };
+	void SubtractCatastropheTile() { --num_catastrophe_tiles; }
 
 
 private:
 	void DiscardUsedToken(MyTokenType type);
 
 	bool is_playing = false;
+	int num_catastrophe_tiles = 2;
 	int num_treasures = 0;
 	int turn;
 	PlayerType faction;

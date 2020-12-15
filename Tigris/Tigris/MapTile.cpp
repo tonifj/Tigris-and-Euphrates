@@ -29,3 +29,9 @@ const bool MapTile::BelongsToKingdom() {
 
 }
 
+void MapTile::RemoveToken() 
+{ 
+	token->SetParent(nullptr);  
+	token = nullptr; 
+}
+

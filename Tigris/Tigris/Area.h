@@ -32,6 +32,9 @@ public:
 	void SetRevoltNotAvailable() { revolt_available = false; }
 	bool CheckValidLeader(MyTokenType type);
 
+	bool WarAvailable() { return war_availabe; }
+	bool RevoltAvailable() { return revolt_available; }
+
 
 private:
 

@@ -29,13 +29,16 @@ private:
 	bool ReadCommand(Player* player, std::string& command, int turn_actions);
 	bool CheckTokenAvailability(Player* player, MyTokenType type);
 	int ActualPlayerActions() { return actual_player_turn_actions; }
-	void AddPointsToPlayer(Area* area, Token* token);
+	void AddPointsTokenPlaced(Area* area, Token* token);
+	void AddPointsRevoltWon(Player* winner, Player* loser, Token* loser_leader);
 
 	//Commands
 	bool CommandTile(Player* player);
 	bool CommandRefresh(Player* player);
 	bool CommandLeader(Player* player);
 	bool CommandTreasure(Player* player);
+	bool CommandCatastrophe();
+	bool CommandRevolt();
 
 	void PrintPlayersVP();
 
@@ -56,16 +59,22 @@ private:
 
 	void UpdateArea(Area* area, MapTile* new_tile);
 
+	//Catastrophe functions
+	bool ProcessCatastrophe(int x, int y);
+
+	//Revolt
+	bool ProcessRevolt(int x, int y);
 
 	//Tools
-	Player* current_player;
 	void SetCurrentPlayer(Player* player) { current_player = player; }
 	Player* GetPlayerByDinasty(PlayerType type);
 	void ClearInput();
+	bool CheckValidLeader(MyTokenType type);
+
 	int actual_player_turn_actions = 0;
 	int player_count = 0;
 	int area_id_counter = 0;
-
+	Player* current_player;
 	Map* map;
 };
 #endif

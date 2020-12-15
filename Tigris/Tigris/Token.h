@@ -46,10 +46,13 @@ public:
 	bool HasTreasure() { return has_treasure; }
 
 protected:
+	bool operator== (Token& t);
+
 	void SetColor(MyTokenType type);
 	MyTokenType token_type;
 	TokenColor token_color;
 	bool has_treasure = false;
+
 
 	//Only for leaders!
 	PlayerType faction;
