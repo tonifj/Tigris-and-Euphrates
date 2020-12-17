@@ -157,7 +157,7 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 
 		else if (command == "catastrophe")
 		{
-			//do catastrophe stuff
+			return CommandCatastrophe();
 		}
 
 		else if (command == "revolt")
@@ -195,8 +195,9 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 			cout << "-: land" << endl;
 			cout << "F: farmer / f: farm" << endl;
 			cout << "M: merchant / f: market" << endl;
-			cout << "T: temple / p: priest" << endl;
+			cout << "P: priest / t: temple" << endl;
 			cout << "K: king / s: settlement" << endl;
+			cout << "^: monument" << endl;
 
 			return false;
 		}
@@ -507,7 +508,7 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 					return player->PlaceToken(map, type, x, y);
 				}
 
-				else if(num_adjacent_tiles_belonging_to_kingdom == 0 && num_adj_tiles_belonging_to_region != 0)
+				else if (num_adjacent_tiles_belonging_to_kingdom == 0 && num_adj_tiles_belonging_to_region != 0)
 				{
 					prev_region->AddTile(map->GetTile(x, y));
 					return player->PlaceToken(map, type, x, y);
@@ -525,9 +526,6 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 
 						return player->PlaceToken(map, type, x, y);
 					}
-
-					
-
 				}
 			}
 
@@ -614,12 +612,25 @@ bool GameManager::CommandCatastrophe()
 
 	if (CheckValidTile(x, y))
 	{
-		if (!CheckValidLeader(map->GetTile(x, y)->GetToken()->GetType()))
+		if (map->GetTile(x, y)->GetToken() != nullptr && !CheckValidLeader(map->GetTile(x, y)->GetToken()->GetType()))
 		{
 			if (current_player->GetNumCatastropheTokens() > 0)
 			{
-				current_player->SubtractCatastropheTile();
-				ProcessCatastrophe(x, y);
+				return ProcessCatastrophe(x, y);
+			}
+
+			else
+			{
+				cout << "exception: you have no more catastrophe tokens available" << endl;
+				return false;
+			}
+		}
+
+		else if (map->GetTile(x, y)->GetToken() == nullptr)
+		{
+			if (current_player->GetNumCatastropheTokens() > 0)
+			{
+				return ProcessCatastrophe(x, y);
 			}
 
 			else
@@ -646,9 +657,63 @@ bool GameManager::CommandCatastrophe()
 
 bool GameManager::ProcessCatastrophe(int x, int y)
 {
-	map->GetTile(x, y)->SetToken(new Token(MyTokenType::CATASTROPHE));
-	return true;
+	if (CheckValidTile(x, y))
+	{
+		if (map->GetTile(x, y)->GetToken() == nullptr)
+		{
+			current_player->SubtractCatastropheTile();
+			map->GetTile(x, y)->SetToken(new Token(MyTokenType::CATASTROPHE));
+			map->PrintMap();
+			return true;
+		}
+
+
+		else if (map->GetTile(x, y)->GetToken()->GetType() != MyTokenType::MONUMENT)
+		{
+			if (map->GetTile(x, y)->GetToken()->GetType() != MyTokenType::CATASTROPHE)
+			{
+				if (map->GetTile(x, y)->GetToken() != nullptr && !map->GetTile(x, y)->GetToken()->HasTreasure())
+				{
+					current_player->SubtractCatastropheTile();
+					map->GetTile(x, y)->GetAreaParent()->RemoveTile(x, y);
+					map->GetTile(x, y)->SetToken(new Token(MyTokenType::CATASTROPHE));
+					map->PrintMap();
+					return true;
+				}
+
+				else
+				{
+					cout << "exception: catastrophe tiles cannot be placed on a tile that stores a treasure" << endl;
+					return false;
+				}
+			}
+
+			else
+			{
+				cout << "exception: catastrophe tiles cannot be placed over other catastrophe tile" << endl;
+				return false;
+			}
+			
+		}
+
+		else
+		{
+			cout << "exception: catastrophe tiles cannot be placed on a monument" << endl;
+			return false;
+		}
+	}
+
+	else
+	{
+		cout << "exception: invalid board space position" << endl;
+		return false;
+	}
+
 }
+
+
+
+
 
 bool GameManager::CommandRevolt()
 {
@@ -1075,7 +1140,7 @@ bool GameManager::Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2)
 			cout << "exception: temple color isn't the same as the tiles" << endl;
 			return false;
 		}
-			
+
 		map->PrintMap();
 		return true;
 	}
