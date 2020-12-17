@@ -41,6 +41,7 @@ private:
 	bool CommandCatastrophe();
 	bool CommandRevolt();
 	bool CommandMonument();
+	bool CommandWar();
 
 	void PrintPlayersVP();
 
@@ -69,6 +70,9 @@ private:
 
 	//Monument
 	bool Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2);
+
+	//War
+	bool ProcessWar(int x, int y);
 
 	//Tools
 	void SetCurrentPlayer(Player* player) { current_player = player; }

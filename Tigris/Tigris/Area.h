@@ -19,6 +19,7 @@ public:
 	MapTile* GetTile(int x, int y);
 	int GetId() { return id; }
 	int GetNumOfLeaders();
+	Area* GetAdjacentArea() { return adjacent_area; }
 
 	bool IsSameAs(Area* area) { if (area != nullptr) return id == area->id; else return new Area(-1); }
 	bool IsKingdom();
@@ -30,6 +31,7 @@ public:
 	void SetWarNotAvailable() { war_availabe = false; }
 	void SetRevoltAvailable() { revolt_available = true; }
 	void SetRevoltNotAvailable() { revolt_available = false; }
+	void SetAdjacentKingdom(Area* area) { area->adjacent_area = this; adjacent_area = area; }
 	bool CheckValidLeader(MyTokenType type);
 
 	bool WarAvailable() { return war_availabe; }
@@ -42,6 +44,7 @@ private:
 	std::vector<MapTile*> tiles;
 	bool war_availabe = false;
 	bool revolt_available = false;
+	Area* adjacent_area = nullptr;
 };
 
 #endif

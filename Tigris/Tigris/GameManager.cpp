@@ -177,16 +177,19 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 
 		else if (command == "help")
 		{
-			cout << "Type the folowing commands: " << endl;
-			cout << "tile: to place a tile you have in your deck" << endl;
-			cout << "refresh: draw tiles from the bag into your hand!" << endl;
-			cout << "leader: to place a leader" << endl;
-			cout << "treasure: to pick a sure" << endl;
-			cout << "catastrophe: to place a catastrophe tile" << endl;
-			cout << "revolt: to begin a revolt in a kingdom" << endl;
-			cout << "war: to begin a war between two kingdoms" << endl;
-			cout << "monument: to build a monument" << endl;
-			cout << "deck: to check your deck" << endl;
+			cout << "- - - - - - - - - - - - - - - -" << endl;
+			cout << "Commands:" << endl;
+			cout << "- - - - - - - - - - - - - - - -" << endl;
+
+			cout << "tile: to place a tile you have in your deck	  *** tile tile-type x-position y-position ***" << endl;
+			cout << "refresh: draw tiles from the bag into your hand! *** refresh token-type- 1 token-type-2 ... up to 6 tokens" << endl;
+			cout << "leader: to place a leader						  *** leader leader-type x-position y-position" << endl;
+			cout << "treasure: to pick a sure						  *** treasure x-position y-position ***"<< endl;
+			cout << "catastrophe: to place a catastrophe tile		  *** catastrophe x-position y-position ***" << endl;
+			cout << "revolt: to begin a revolt in a kingdom			  *** revolt leader-x-position leader-y-position ***" << endl;
+			cout << "war: to begin a war between two kingdoms		  *** war leader-x-position leader-y-position ***" << endl;
+			cout << "monument: to build a monument					  *** monument x-position y-position ***" << endl;
+			cout << "deck: to check your deck						  *** deck ***" << endl;
 
 			cout << "- - - - - - - - - - - - - - - -" << endl;
 			cout << "Map info:" << endl;
@@ -480,7 +483,10 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 						if (!only_one_kingdom)
 						{
 							cout << "Tile placed between two kingdoms" << endl;
+							prev_kingdom->SetAdjacentKingdom(adjacents[i]->GetAreaParent());
 							prev_kingdom->SetWarAvailable();
+
+							adjacents[i]->GetAreaParent()->SetAdjacentKingdom(prev_kingdom);
 							adjacents[i]->GetAreaParent()->SetWarAvailable();
 
 							adjacents[i]->GetAreaParent()->AddTile(map->GetTile(x, y));
@@ -693,7 +699,7 @@ bool GameManager::ProcessCatastrophe(int x, int y)
 				cout << "exception: catastrophe tiles cannot be placed over other catastrophe tile" << endl;
 				return false;
 			}
-			
+
 		}
 
 		else
@@ -710,10 +716,6 @@ bool GameManager::ProcessCatastrophe(int x, int y)
 	}
 
 }
-
-
-
-
 
 bool GameManager::CommandRevolt()
 {
@@ -1151,6 +1153,59 @@ bool GameManager::Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2)
 		return false;
 	}
 
+}
+
+bool GameManager::CommandWar()
+{
+	int x, y;
+	cin >> x >> y;
+
+	if (CheckValidTile(x, y))
+	{
+		if (CheckValidLeader(map->GetTile(x, y)->GetToken()->GetType()))
+		{
+			if (map->GetAreaByTile(x, y)->WarAvailable())
+				return ProcessWar(x, y);
+
+			else
+			{
+				cout << "exception: war is not available" << endl;
+				return false;
+			}
+		}
+
+		else
+		{
+			cout << "exception: you must select a leader" << endl;
+			return false;
+		}
+	}
+
+	else
+	{
+		cout << "exception: invalid board space position" << endl;
+		return false;
+	}
+}
+
+bool GameManager::ProcessWar(int x, int y)
+{
+	// current player is the attacker
+	Player* defender;
+
+	Area* area1 = map->GetTile(x, y)->GetAreaParent();
+
+	if (area1->GetAdjacentArea() != nullptr)
+	{
+		vector <Token*> area1_leaders = area1->GetLeaders();
+		vector <Token*> area2_leaders = area1->GetAdjacentArea()->GetLeaders();
+	}
+
+	else
+	{
+		cout << "exception: adjacent kingdom not found" << endl;
+		return false;
+	}
 }
 
 TokenColor GameManager::TranslateStringToColor(std::string s)
