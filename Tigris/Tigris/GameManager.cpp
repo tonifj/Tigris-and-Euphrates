@@ -445,9 +445,12 @@ bool GameManager::IsTokenPartOfKingdom(Token* token)
 bool GameManager::ProcessTile(Player* player, MyTokenType type)
 {
 	int num_adjacent_tiles_belonging_to_kingdom = 0;
+	int num_adj_tiles_belonging_to_region = 0;
 	bool only_one_kingdom = true;
+	bool only_one_region = true;
 
 	Area* prev_kingdom = nullptr;
+	Area* prev_region = nullptr;
 	int x, y;
 	if (CheckTokenAvailability(player, type))
 	{
@@ -482,15 +485,31 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 							adjacents[i]->GetAreaParent()->AddTile(map->GetTile(x, y));
 
 							return player->PlaceToken(map, type, x, y);
-
 						}
+					}
+
+					else if (!adjacents[i]->BelongsToKingdom() && adjacents[i]->GetToken() != nullptr)
+					{
+						++num_adj_tiles_belonging_to_region;
+
+						if (!adjacents[i]->GetAreaParent()->IsSameAs(prev_region) && prev_region != nullptr)
+							only_one_region = false;
+
+						else
+							prev_region = adjacents[i]->GetAreaParent();
 					}
 				}
 
-				if (num_adjacent_tiles_belonging_to_kingdom == 0)
+				if (num_adjacent_tiles_belonging_to_kingdom == 0 && num_adj_tiles_belonging_to_region == 0)
 				{
 					map->GetTile(x, y)->SetToken(new Token(type));
 					map->AddArea(new Area(map->GetTile(x, y)));
+					return player->PlaceToken(map, type, x, y);
+				}
+
+				else if(num_adjacent_tiles_belonging_to_kingdom == 0 && num_adj_tiles_belonging_to_region != 0)
+				{
+					prev_region->AddTile(map->GetTile(x, y));
 					return player->PlaceToken(map, type, x, y);
 				}
 
@@ -506,6 +525,9 @@ bool GameManager::ProcessTile(Player* player, MyTokenType type)
 
 						return player->PlaceToken(map, type, x, y);
 					}
+
+					
+
 				}
 			}
 
@@ -941,9 +963,6 @@ bool GameManager::CommandMonument()
 			cout << "exception: there are unresolved conflicts" << endl;
 			return false;
 		}
-
-
-
 	}
 
 	else
@@ -981,7 +1000,6 @@ bool GameManager::Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2)
 					//if the two inferior adjacents to adjacents_to_player_input[i] and temp_tile are the same color...
 					if (map->GetTile(temp_tile->position_x, temp_tile->position_y - 1)->GetToken()->GetColor() == map->GetTile(x, y - 1)->GetToken()->GetColor())
 					{
-						cout << "4 temples together found" << endl;
 						tiles_to_remove.push_back(temp_tile);
 						tiles_to_remove.push_back(map->GetTile(temp_tile->position_x, temp_tile->position_y - 1));
 						tiles_to_remove.push_back(map->GetTile(x, y - 1));
@@ -999,7 +1017,6 @@ bool GameManager::Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2)
 				{
 					if (map->GetTile(temp_tile->position_x, temp_tile->position_y + 1)->GetToken()->GetColor() == map->GetTile(x, y + 1)->GetToken()->GetColor())
 					{
-						cout << "4 temples together found" << endl;
 						tiles_to_remove.push_back(temp_tile);
 						tiles_to_remove.push_back(map->GetTile(temp_tile->position_x, temp_tile->position_y + 1));
 						tiles_to_remove.push_back(map->GetTile(x, y + 1));
@@ -1020,7 +1037,6 @@ bool GameManager::Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2)
 				{
 					if (map->GetTile(temp_tile->position_x - 1, temp_tile->position_y)->GetToken()->GetColor() == map->GetTile(x - 1, y)->GetToken()->GetColor())
 					{
-						cout << "4 temples together found" << endl;
 						tiles_to_remove.push_back(temp_tile);
 						tiles_to_remove.push_back(map->GetTile(temp_tile->position_x - 1, temp_tile->position_y));
 						tiles_to_remove.push_back(map->GetTile(x - 1, y));
@@ -1033,7 +1049,6 @@ bool GameManager::Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2)
 				{
 					if (map->GetTile(temp_tile->position_x + 1, temp_tile->position_y)->GetToken()->GetColor() == map->GetTile(x + 1, y)->GetToken()->GetColor())
 					{
-						cout << "4 temples together found" << endl;
 						tiles_to_remove.push_back(temp_tile);
 						tiles_to_remove.push_back(map->GetTile(temp_tile->position_x + 1, temp_tile->position_y));
 						tiles_to_remove.push_back(map->GetTile(x + 1, y));
@@ -1057,7 +1072,7 @@ bool GameManager::Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2)
 
 		else
 		{
-			cout << "exception: there are not enough tiles of the same color together" << endl;
+			cout << "exception: temple color isn't the same as the tiles" << endl;
 			return false;
 		}
 			
