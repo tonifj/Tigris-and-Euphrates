@@ -57,5 +57,7 @@ Token::Token(MyTokenType type, MapTile* parent) : token_type(type)
 
 bool Token::operator==(Token& token)
 {
-	return	token.GetType() == token_type;
+	return	token.GetType() == token_type && 
+			token.GetTileParent()->position_x == tile_parent->position_x && 
+			token.GetTileParent()->position_y == tile_parent->position_y;
 }

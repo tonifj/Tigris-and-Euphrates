@@ -7,6 +7,7 @@
 
 
 enum MyTokenType;
+enum TokenColor;
 enum PlayerType;
 class Player;
 class Token;
@@ -39,6 +40,7 @@ private:
 	bool CommandTreasure(Player* player);
 	bool CommandCatastrophe();
 	bool CommandRevolt();
+	bool CommandMonument();
 
 	void PrintPlayersVP();
 
@@ -65,8 +67,12 @@ private:
 	//Revolt
 	bool ProcessRevolt(int x, int y);
 
+	//Monument
+	bool Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2);
+
 	//Tools
 	void SetCurrentPlayer(Player* player) { current_player = player; }
+	TokenColor TranslateStringToColor(std::string s);
 	Player* GetPlayerByDinasty(PlayerType type);
 	void ClearInput();
 	bool CheckValidLeader(MyTokenType type);

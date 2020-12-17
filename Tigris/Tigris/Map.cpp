@@ -151,6 +151,12 @@ void Map::PrintMap() const
 						cout << 'X';
 						continue;
 					}
+
+					else if (temp_tile->GetToken()->GetType() == MyTokenType::MONUMENT)
+					{
+						cout << '^';
+						continue;
+					}
 				}
 				else
 					cout << '-';

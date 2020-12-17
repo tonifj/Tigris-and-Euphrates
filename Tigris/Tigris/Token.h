@@ -14,6 +14,7 @@ enum MyTokenType
 	PRIEST,
 	MERCHANT,
 	FARMER,
+	MONUMENT,
 	INVALID
 };
 
@@ -22,7 +23,8 @@ enum TokenColor
 	RED,
 	BLUE,
 	GREEN,
-	BLACK
+	BLACK,
+	WRONG
 };
 
 enum PlayerType;

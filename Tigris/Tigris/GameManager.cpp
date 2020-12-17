@@ -172,7 +172,7 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 
 		else if (command == "monument")
 		{
-			//build me a monument pls
+			return CommandMonument();
 		}
 
 		else if (command == "help")
@@ -712,7 +712,7 @@ bool GameManager::ProcessRevolt(int x, int y)
 
 		for (int i = 0; i < defender_adj_temples.size(); ++i)
 		{
-			if (defender_adj_temples[i]->GetToken()!= nullptr && defender_adj_temples[i]->GetToken()->GetType() == MyTokenType::TEMPLE)
+			if (defender_adj_temples[i]->GetToken() != nullptr && defender_adj_temples[i]->GetToken()->GetType() == MyTokenType::TEMPLE)
 				++defender_temples;
 		}
 
@@ -914,6 +914,180 @@ bool GameManager::CommandRefresh(Player* player)
 		return false;
 	}
 
+}
+
+bool GameManager::CommandMonument()
+{
+	string color1, color2;
+	cin >> color1 >> color2;
+
+	TokenColor c1, c2;
+
+	c1 = TranslateStringToColor(color1);
+	c2 = TranslateStringToColor(color2);
+
+	int x, y;
+	cin >> x >> y;
+
+	if (CheckValidTile(x, y))
+	{
+		if (!map->GetTile(x, y)->GetAreaParent()->WarAvailable())
+		{
+			return Check2x2Tokens(x, y, c1, c2);
+		}
+
+		else
+		{
+			cout << "exception: there are unresolved conflicts" << endl;
+			return false;
+		}
+
+
+
+	}
+
+	else
+	{
+		cout << "exception: invalid board space position" << endl;
+		return false;
+	}
+
+}
+
+//This function checks for the adjacent token near the player input that has the same color, and then, depending
+//on if the adjacent has a greater or lesser x or y coordinate, checks the immediate adjacents to the player input
+bool GameManager::Check2x2Tokens(int x, int y, TokenColor c1, TokenColor c2)
+{
+	vector<MapTile*> adjacents_to_player_input = map->GetAdjacentsToTile(x, y);
+	MapTile* temp_tile = nullptr;
+	vector<MapTile*> tiles_to_remove;
+	tiles_to_remove.reserve(4);
+
+	tiles_to_remove.push_back(map->GetTile(x, y));
+
+	for (int i = 0; i < adjacents_to_player_input.size(); ++i)
+	{
+		temp_tile = adjacents_to_player_input[i];
+
+		//check vertically if adjacents_to_player_input[i] and temp_tile are adjacent to temples, vertically
+		if (temp_tile->position_x >= x && temp_tile->position_y == y ||
+			temp_tile->position_x < x && temp_tile->position_y == y)
+		{
+			if (CheckValidTile(temp_tile->position_x, temp_tile->position_y - 1) && CheckValidTile(x, y - 1))
+			{
+				if (map->GetTile(temp_tile->position_x, temp_tile->position_y - 1)->GetToken() != nullptr &&
+					map->GetTile(x, y - 1)->GetToken() != nullptr)
+				{
+					//if the two inferior adjacents to adjacents_to_player_input[i] and temp_tile are the same color...
+					if (map->GetTile(temp_tile->position_x, temp_tile->position_y - 1)->GetToken()->GetColor() == map->GetTile(x, y - 1)->GetToken()->GetColor())
+					{
+						cout << "4 temples together found" << endl;
+						tiles_to_remove.push_back(temp_tile);
+						tiles_to_remove.push_back(map->GetTile(temp_tile->position_x, temp_tile->position_y - 1));
+						tiles_to_remove.push_back(map->GetTile(x, y - 1));
+						break;
+					}
+				}
+
+			}
+
+			//checking the two superior tokens
+			if (CheckValidTile(temp_tile->position_x, temp_tile->position_y + 1) && CheckValidTile(x, y + 1))
+			{
+				if (map->GetTile(temp_tile->position_x, temp_tile->position_y + 1)->GetToken() != nullptr &&
+					map->GetTile(x, y + 1)->GetToken() != nullptr)
+				{
+					if (map->GetTile(temp_tile->position_x, temp_tile->position_y + 1)->GetToken()->GetColor() == map->GetTile(x, y + 1)->GetToken()->GetColor())
+					{
+						cout << "4 temples together found" << endl;
+						tiles_to_remove.push_back(temp_tile);
+						tiles_to_remove.push_back(map->GetTile(temp_tile->position_x, temp_tile->position_y + 1));
+						tiles_to_remove.push_back(map->GetTile(x, y + 1));
+						break;
+					}
+				}
+			}
+		}
+
+		else if (temp_tile->position_x == x && temp_tile->position_y >= y ||
+			temp_tile->position_x == x && temp_tile->position_y < y)
+		{
+			//check horizontally
+			if (CheckValidTile(temp_tile->position_x - 1, temp_tile->position_y) && CheckValidTile(x - 1, y))
+			{
+				if (map->GetTile(temp_tile->position_x - 1, temp_tile->position_y)->GetToken() != nullptr &&
+					map->GetTile(x - 1, y)->GetToken() != nullptr)
+				{
+					if (map->GetTile(temp_tile->position_x - 1, temp_tile->position_y)->GetToken()->GetColor() == map->GetTile(x - 1, y)->GetToken()->GetColor())
+					{
+						cout << "4 temples together found" << endl;
+						tiles_to_remove.push_back(temp_tile);
+						tiles_to_remove.push_back(map->GetTile(temp_tile->position_x - 1, temp_tile->position_y));
+						tiles_to_remove.push_back(map->GetTile(x - 1, y));
+						break;
+					}
+				}
+
+				if (map->GetTile(temp_tile->position_x + 1, temp_tile->position_y)->GetToken() != nullptr &&
+					map->GetTile(x + 1, y)->GetToken() != nullptr)
+				{
+					if (map->GetTile(temp_tile->position_x + 1, temp_tile->position_y)->GetToken()->GetColor() == map->GetTile(x + 1, y)->GetToken()->GetColor())
+					{
+						cout << "4 temples together found" << endl;
+						tiles_to_remove.push_back(temp_tile);
+						tiles_to_remove.push_back(map->GetTile(temp_tile->position_x + 1, temp_tile->position_y));
+						tiles_to_remove.push_back(map->GetTile(x + 1, y));
+						break;
+					}
+				}
+
+			}
+		}
+	}
+
+	if (tiles_to_remove.size() == 4)
+	{
+		if (c1 == tiles_to_remove[0]->GetToken()->GetColor() || c2 == tiles_to_remove[0]->GetToken()->GetColor())
+		{
+			for (int i = 0; i < tiles_to_remove.size(); ++i)
+			{
+				map->GetTile(tiles_to_remove[i]->position_x, tiles_to_remove[i]->position_y)->SetToken(new Token(MyTokenType::MONUMENT));
+			}
+		}
+
+		else
+		{
+			cout << "exception: there are not enough tiles of the same color together" << endl;
+			return false;
+		}
+			
+		map->PrintMap();
+		return true;
+	}
+
+	else
+	{
+		cout << "exception: there are not enough tiles of the same color together" << endl;
+		return false;
+	}
+
+}
+
+TokenColor GameManager::TranslateStringToColor(std::string s)
+{
+	if (s == "red")
+		return TokenColor::RED;
+
+	else if (s == "green")
+		return TokenColor::GREEN;
+
+	else if (s == "black")
+		return TokenColor::BLACK;
+
+	else if (s == "blue")
+		return TokenColor::BLUE;
+	else
+		return TokenColor::WRONG;
 }
 
 void GameManager::PrintPlayersVP()
