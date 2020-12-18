@@ -27,9 +27,12 @@ Here's an example of commands:
 - settlement market temple temple farm settlement
 - settlement market temple temple farm settlement 
 - "----"
-- leader king 5 0 tile settlement 6 0 
+- leader king 5 0 
+- tile settlement 6 0 
 - "----"
-- leader king 9 0 tile settlement 8 0 
+- leader king 9 0 
+- tile settlement 8 0 
 - "----"
-- tile temple 7 0 war 5 0 
+- tile temple 7 0 
+- war 5 0 
 - "----"
