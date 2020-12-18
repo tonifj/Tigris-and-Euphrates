@@ -73,6 +73,8 @@ private:
 
 	//War
 	bool ProcessWar(int x, int y);
+	void EndWar(Player* winner, Player* loser, Token* loser_leader, int num_cards_to_discard);
+	MyTokenType GetFollowerByLeader(Token* leader);
 
 	//Tools
 	void SetCurrentPlayer(Player* player) { current_player = player; }

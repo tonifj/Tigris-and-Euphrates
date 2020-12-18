@@ -42,7 +42,7 @@ public:
 	VictoryPoints GetVP() { return points; }
 	void UpdatePoints(TokenColor color);
 	int GetTemplesInDeck();
-	int GetTemplesNearLeader(Token*);
+	int GetNumOfTokensByColor(TokenColor);
 
 	//Actions
 	bool PlaceToken(Map* map, MyTokenType type, int x, int y);
@@ -52,10 +52,10 @@ public:
 
 	void AddTreasure() { ++num_treasures; };
 	void SubtractCatastropheTile() { --num_catastrophe_tiles; }
+	void DiscardUsedToken(MyTokenType type);
 
 
 private:
-	void DiscardUsedToken(MyTokenType type);
 
 	bool is_playing = false;
 	int num_catastrophe_tiles = 2;

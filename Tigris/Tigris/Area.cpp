@@ -84,3 +84,46 @@ std::vector<Token*> Area::GetLeaders()
 
 	return leaders_vec;
 }
+
+Token* Area::GetLeader(MyTokenType type)
+{
+	for (int i = 0; i < GetLeaders().size(); ++i)
+	{
+		if (GetLeaders()[i]->GetType() == type)
+			return GetLeaders()[i];
+	}
+}
+
+int Area::GetNumSupportersForLeader(Token* leader)
+{
+	int num_supporters = 0;
+	for (int i = 0; i < tiles.size(); ++i)
+	{
+		if (tiles[i]->GetToken() != nullptr && CheckValidLeader(tiles[i]->GetToken()->GetType()) && leader->GetColor() == tiles[i]->GetToken()->GetColor())
+			++num_supporters;
+	}
+
+	return num_supporters;
+}
+
+bool Area::IsTokenHere(MyTokenType type)
+{
+	for (int i = 0; i < tiles.size(); ++i)
+	{
+		if(tiles[i]->GetToken() != nullptr && tiles[i]->GetToken()->GetType() == type)
+			return true;
+	}
+
+	return false;
+}
+
+Token* Area::FindToken(MyTokenType type)
+{
+	for (int i = 0; i < tiles.size(); ++i)
+	{
+		if (tiles[i]->GetToken()->GetType() == type)
+			return tiles[i]->GetToken();
+	}
+
+	return nullptr;
+}

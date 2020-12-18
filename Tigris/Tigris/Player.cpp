@@ -258,3 +258,14 @@ int Player::GetTemplesInDeck()
 
 	return num_temples;
 }
+
+int Player::GetNumOfTokensByColor(TokenColor c)
+{
+	int num_tokens = 0;
+	for (int i = 0; i < deck.size(); ++i)
+	{
+		if (deck[i]->GetColor() == c)
+			++num_tokens;
+	}
+	return num_tokens;
+}

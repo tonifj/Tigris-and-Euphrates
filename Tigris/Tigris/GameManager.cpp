@@ -167,7 +167,7 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 
 		else if (command == "war")
 		{
-			//become USA
+			return CommandWar();
 		}
 
 		else if (command == "monument")
@@ -864,9 +864,6 @@ void GameManager::AddPointsTokenPlaced(Area* area, Token* token)
 
 		}
 	}
-
-
-
 }
 
 void GameManager::AddPointsRevoltWon(Player* winner, Player* loser, Token* loser_leader)
@@ -1194,19 +1191,102 @@ bool GameManager::ProcessWar(int x, int y)
 	Player* defender;
 
 	Area* area1 = map->GetTile(x, y)->GetAreaParent();
+	Area* area2 = area1->GetAdjacentArea();
 
-	if (area1->GetAdjacentArea() != nullptr)
+
+	vector<Token*> area1_leaders = area1->GetLeaders();
+	vector<Token*> area2_leaders = area2->GetLeaders();
+	vector<MyTokenType> leaders_at_war;
+	leaders_at_war.reserve(4);
+
+	for (int i = 0; i < area1_leaders.size(); ++i)
 	{
-		vector <Token*> area1_leaders = area1->GetLeaders();
-		vector <Token*> area2_leaders = area1->GetAdjacentArea()->GetLeaders();
+		for (int j = 0; j < area2_leaders.size(); ++j)
+		{
+			if(area1_leaders[i]->GetType() == area2_leaders[j]->GetType())
+				leaders_at_war.push_back(area1_leaders[i]->GetType());
+		}
 	}
 
-	else
+	int area1_supporters = 0;
+	int area2_supporters = 0;
+
+	for (int i = 0; i < leaders_at_war.size(); ++i)
 	{
-		cout << "exception: adjacent kingdom not found" << endl;
-		return false;
+		Token* leader1 = area1->GetLeader(leaders_at_war[i]);
+		Token* leader2 = area2->GetLeader(leaders_at_war[i]);
+		defender = GetPlayerByDinasty(leader2->GetFaction());
+
+		//Get supporters for each kingdom
+		area1_supporters += area1->GetNumSupportersForLeader(leader1);
+		area2_supporters += area2->GetNumSupportersForLeader(leader2);
+
+		//Get supporters for each player deck
+		area1_supporters += current_player->GetNumOfTokensByColor(leader1->GetColor());
+		area2_supporters += defender->GetNumOfTokensByColor(leader2->GetColor());
+
+		if (area1_supporters > area2_supporters)
+		{
+			EndWar(current_player, defender, leader2, defender->GetNumOfTokensByColor(leader2->GetColor()));
+			map->PrintMap();
+		}
+
+		else if (area1_supporters <= area2_supporters)
+		{
+			EndWar(defender, current_player, leader1, current_player->GetNumOfTokensByColor(leader1->GetColor()));
+			map->PrintMap();
+		}
+
+	}
+
+	return true;
+}
+
+void GameManager::EndWar(Player* winner, Player* loser, Token* loser_leader, int num_tokens_to_discard)
+{
+	//remove supporter cards from deck
+	for (int i = 0; i < num_tokens_to_discard; ++i)
+	{
+		loser->DiscardUsedToken(GetFollowerByLeader(loser_leader));
+	}
+
+	Area* loser_area = loser_leader->GetTileParent()->GetAreaParent();
+	//remove supporter cards from board
+	while (loser_area->IsTokenHere(GetFollowerByLeader(loser_leader)))
+	{
+		MapTile* temp_tile = loser_area->FindToken(GetFollowerByLeader(loser_leader))->GetTileParent();
+		loser_area->RemoveTile(temp_tile->position_x, temp_tile->position_y);
+		map->UpdateMap(nullptr, temp_tile->position_x, temp_tile->position_y);
+
+		winner->UpdatePoints(loser_leader->GetColor());
+	}
+
+
+	loser_leader->GetTileParent()->GetAreaParent()->RemoveTile(loser_leader->GetTileParent()->position_x, loser_leader->GetTileParent()->position_y);
+	loser_leader->GetTileParent()->RemoveToken();
+	winner->UpdatePoints(loser_leader->GetColor());
+
+	
+}
+
+MyTokenType GameManager::GetFollowerByLeader(Token* leader)
+{
+	switch (leader->GetType())
+	{
+	case MyTokenType::KING:
+		return MyTokenType::SETTLEMENT;
+
+	case MyTokenType::MERCHANT:
+		return MyTokenType::MARKET;
+
+	case MyTokenType::PRIEST:
+		return MyTokenType::TEMPLE;
+
+	case MyTokenType::FARMER:
+		return MyTokenType::FARM;
 	}
 }
+
 
 TokenColor GameManager::TranslateStringToColor(std::string s)
 {
