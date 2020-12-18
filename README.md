@@ -22,7 +22,7 @@ Instructions:
     
 5) Enjoy! (Btw, type help for more specific help)
 
-Here's an example of commands:
+Here's an example of commands: (the "----" must be introduced as ----, github does weird stuff if I put only the bars)
 
 - settlement market temple temple farm settlement
 - settlement market temple temple farm settlement 
