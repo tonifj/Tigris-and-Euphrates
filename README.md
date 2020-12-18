@@ -2,6 +2,8 @@
 
 This is a replica of the famous board game translated to C++.
 
+leader types: king - merchant - priest - farmer
+
 Instructions:
 1) Write 6 tokens you's like to have: settlement, temple, farm or market
 
@@ -21,6 +23,14 @@ Instructions:
     - deck To check your deck	
     
 5) Enjoy! (Btw, type help for more specific help)
+
+*** Tips ***
+
+- Only merchants can pick up treasures
+- Only farms can be placed in the river
+- Every board space can fit only one token
+- Leaders must be placed near a temple
+- Catastrophe tiles cannot be placed over a leader
 
 Here's an example of commands: (the "----" must be introduced as ----, github does weird stuff if I put only the bars)
 
