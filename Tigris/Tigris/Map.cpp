@@ -89,6 +89,11 @@ void Map::PrintMap() const
 
 	for (int j = 10; j >= 0; --j)
 	{
+		if (j == 10)
+			cout << j << ' ';
+		else
+			cout << j <<  "  ";
+
 		for (int i = 0; i < 16; ++i)
 		{
 			if (tiles[i][j]->IsRiver())
@@ -165,6 +170,8 @@ void Map::PrintMap() const
 
 		cout << endl;
 	}
+
+	cout << "   0              15";
 	cout << endl << "=================" << endl;
 
 }

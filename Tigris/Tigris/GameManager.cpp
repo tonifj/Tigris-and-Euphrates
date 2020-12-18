@@ -54,12 +54,11 @@ void GameManager::WaitForPlayers()
 
 	cout << "Waiting new players. To declare yourself as a player, write 6 cards you'd like to have among these 4 types: " << endl;
 	cout << "settlement - farm - temple - market" << endl;
-	cout << "Once you finish, write '----' and begin the game!" << endl;
+	cout << "Once you finish, write ---- and begin the game!" << endl;
 
 	//while we're waiting more players
 	while (waiting_more_players && player_count < MAX_PLAYERS && cin >> token_name)
 	{
-
 		//detect ---- to tell the game we don't want more players
 		if (token_name == "----" && token_counter == 0)
 		{
@@ -71,6 +70,12 @@ void GameManager::WaitForPlayers()
 				waiting_more_players = false;
 				cout << "No more players!" << endl;
 			}
+		}
+
+		else if (token_name == "help")
+		{
+			cout << "Type settlement, market, temple or farm depending on the tiles you want. Up to 6!" << endl;
+			cout << "You can put them in one line like this: settlement farm temple market settlement farm" << endl;
 		}
 
 		//Detect tiles that the player wants
@@ -181,23 +186,27 @@ bool GameManager::ReadCommand(Player* player, string& command, int turn_actions)
 			cout << "Commands:" << endl;
 			cout << "- - - - - - - - - - - - - - - -" << endl;
 
-			cout << "tile: to place a tile you have in your deck	  *** tile tile-type x-position y-position ***" << endl;
-			cout << "refresh: draw tiles from the bag into your hand! *** refresh token-type- 1 token-type-2 ... up to 6 tokens" << endl;
-			cout << "leader: to place a leader						  *** leader leader-type x-position y-position" << endl;
-			cout << "treasure: to pick a sure						  *** treasure x-position y-position ***"<< endl;
-			cout << "catastrophe: to place a catastrophe tile		  *** catastrophe x-position y-position ***" << endl;
-			cout << "revolt: to begin a revolt in a kingdom			  *** revolt leader-x-position leader-y-position ***" << endl;
-			cout << "war: to begin a war between two kingdoms		  *** war leader-x-position leader-y-position ***" << endl;
-			cout << "monument: to build a monument					  *** monument x-position y-position ***" << endl;
-			cout << "deck: to check your deck						  *** deck ***" << endl;
+			cout << "tile: to place a tile you have in your deck	  *** tile [tile-type] [x] [y] ***" << endl;
+			cout << "refresh: draw tiles from the bag into your hand!  *** refresh [token-type] [token-type] ... up to 6 tokens ***" << endl;
+			cout << "leader: to place a leader			  *** leader [leader-type] [x] [y] ***" << endl;
+			cout << "treasure: to pick a sure			  *** treasure [x] [y] ***"<< endl;
+			cout << "catastrophe: to place a catastrophe tile	  *** catastrophe [x] [y] ***" << endl;
+			cout << "revolt: to begin a revolt in a kingdom		  *** revolt [leader-x] [leader-y] ***" << endl;
+			cout << "war: to begin a war between two kingdoms	  *** war [leader-x] [leader-y] ***" << endl;
+			cout << "monument: to build a monument			  *** monument [x] [y] ***" << endl;
+			cout << "deck: to check your deck			  *** deck ***" << endl;
 
+			cout << "- - - - - - - - - - - - - - - -" << endl;
+			cout << "Token-type: settlement - farm - market - temple" << endl;
+			cout << "- - - - - - - - - - - - - - - -" << endl;
+			cout << "Leader-type: king - farmer - merchant - priest" << endl;
 			cout << "- - - - - - - - - - - - - - - -" << endl;
 			cout << "Map info:" << endl;
 			cout << "- - - - - - - - - - - - - - - -" << endl;
 			cout << "*: river" << endl;
 			cout << "-: land" << endl;
 			cout << "F: farmer / f: farm" << endl;
-			cout << "M: merchant / f: market" << endl;
+			cout << "M: merchant / m: market" << endl;
 			cout << "P: priest / t: temple" << endl;
 			cout << "K: king / s: settlement" << endl;
 			cout << "^: monument" << endl;
