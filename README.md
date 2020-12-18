@@ -10,25 +10,26 @@ Instructions:
 3) Type ---- to tell the GameManager you finished setting the players
 
 4) Type these commands in this format (up to 2 per turn!)
-    -tile [type] [x] [y] To place a tile anywhere in the map, if possible
-    -refresh [type] [type] ... Refresh your deck up to 6 tokens
-    -leader [type] [x] [y] To place a leader anywhere						 
-    -treasure [x] [y] To pick a treasure if there is any!						  
-    -catastrophe [x] [y] To place a catastrophe tile		  
-    -revolt [leader-x] [leader-y] To begin a revolt in a kingdom			  
-    -war [leader-x] [leader-y] To begin a war between two kingdoms		  
-    -monument [x] [y] To build a monument
-    -deck To check your deck	
+    - tile [type] [x] [y] To place a tile anywhere in the map, if possible
+    - refresh [type] [type] ... Refresh your deck up to 6 tokens
+    - leader [type] [x] [y] To place a leader anywhere						 
+    - treasure [x] [y] To pick a treasure if there is any!						  
+    - catastrophe [x] [y] To place a catastrophe tile		  
+    - revolt [leader-x] [leader-y] To begin a revolt in a kingdom			  
+    - war [leader-x] [leader-y] To begin a war between two kingdoms		  
+    - monument [x] [y] To build a monument
+    - deck To check your deck	
     
 5) Enjoy! (Btw, type help for more specific help)
 
 Here's an example of commands:
 
-settlement market temple temple farm settlement
-settlement market temple temple farm settlement ----
-
-leader king 5 0 tile settlement 6 0 ----
-
-leader king 9 0 tile settlement 8 0 ----
-
-tile temple 7 0 war 5 0 ----
+- settlement market temple temple farm settlement
+- settlement market temple temple farm settlement 
+- "----"
+- leader king 5 0 tile settlement 6 0 
+- "----"
+- leader king 9 0 tile settlement 8 0 
+- "----"
+- tile temple 7 0 war 5 0 
+- "----"
