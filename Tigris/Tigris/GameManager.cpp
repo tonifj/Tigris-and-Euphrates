@@ -1197,7 +1197,7 @@ bool GameManager::CommandWar()
 bool GameManager::ProcessWar(int x, int y)
 {
 	// current player is the attacker
-	Player* defender;
+	Player* defender = nullptr;
 
 	Area* area1 = map->GetTile(x, y)->GetAreaParent();
 	Area* area2 = area1->GetAdjacentArea();
